@@ -20,7 +20,7 @@ export async function signupPost(req, res, next) {
       return res.status(400).json({ error: "Username must be unique." });
     }
 
-    const hashedPassword = await bcrypt.hash(username, 1);
+    const hashedPassword = await bcrypt.hash(username, 5);
     const user = await prisma.user.create({
       data: {
         username: username,
