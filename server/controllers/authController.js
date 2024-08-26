@@ -7,7 +7,7 @@ export async function signupPost(req, res, next) {
   if (!username || !password) {
     return res
       .status(400)
-      .json({ error: "Username and password must be provided." });
+      .json({ error: "Username or password is not provided." });
   }
 
   try {
@@ -18,7 +18,7 @@ export async function signupPost(req, res, next) {
     });
 
     if (userExists) {
-      return res.status(400).json({ error: "Username must be unique." });
+      return res.status(400).json({ error: "Username is not unique." });
     }
 
     const hashedPassword = await bcrypt.hash(username, 5);
@@ -41,7 +41,7 @@ export async function loginPost(req, res, next) {
   if (!username || !password) {
     return res
       .status(400)
-      .json({ error: "Username and password must be provided." });
+      .json({ error: "Username or password is not provided." });
   }
 
   try {
