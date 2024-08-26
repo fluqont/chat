@@ -1,7 +1,7 @@
 import express, { json, urlencoded } from "express";
 import cors from "cors";
-import router from "./routes";
-import errorHandler from "./middleware/errorHandler";
+import router from "./routes/index.js";
+import errorHandler from "./middleware/errorHandler.js";
 const app = express();
 app.use(cors());
 app.use(json());
