@@ -11,9 +11,9 @@ Auth is currectly with JWT, but it's likely temporary.
 
 # Usage
 
-1. `cd backend && npm install`
+1. `cd server && npm install`
 
-2. `cd ../frontend && npm install`
+2. `cd ../client && npm install`
 
 3.
 
