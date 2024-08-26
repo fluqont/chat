@@ -68,7 +68,7 @@ export async function loginPost(req, res, next) {
       process.env.SECRET,
       {
         expiresIn: "24h",
-      }
+      },
     );
     res.json({ token: token });
   } catch (err) {
