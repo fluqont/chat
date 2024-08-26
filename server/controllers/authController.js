@@ -76,4 +76,15 @@ export async function loginPost(req, res, next) {
   }
 }
 
-export async function authGet(req, res, next) {}
+export async function authGet(req, res, next) {
+  try {
+    const bearerHeader = req.header("Authorization");
+    const token = bearerHeader.split(" ")[1];
+
+    const user = jwt.verify(token, process.env.SECRET);
+
+    res.json({ user: user });
+  } catch (err) {
+    res.status(401).json({ error: "Unauthorized." });
+  }
+}
