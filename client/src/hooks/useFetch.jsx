@@ -3,11 +3,15 @@ import { useState } from "react";
 export default function useFetch() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function fire(route, options) {
+    setIsLoading(true);
     try {
-      const response = await fetch(import.meta.env.API_URL + route, options);
+      const response = await fetch(
+        import.meta.env.VITE_API_URL + route,
+        options,
+      );
       const result = await response.json();
 
       // http error
