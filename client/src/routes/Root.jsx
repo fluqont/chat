@@ -8,7 +8,7 @@ function Root() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const { data, fire } = useFetch();
+  const { data, error, fire } = useFetch();
 
   useEffect(() => {
     localStorage.setItem("token", token);
@@ -17,9 +17,12 @@ function Root() {
   }, [token]);
 
   useEffect(() => {
-    setUser(data?.user);
-    console.log("Data changed: ", data);
-  }, [data]);
+    if (error) {
+      setUser(null);
+    } else {
+      setUser(data?.user);
+    }
+  }, [data, error]);
 
   return (
     <UserContext.Provider value={{ user, setToken }}>

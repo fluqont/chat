@@ -23,12 +23,12 @@ export default function useFetch(method = "get") {
       const result = await response.json();
 
       // http error
-      if (response.ok || response.status === 401) {
-        setData(result);
-      } else {
+      if (!response.ok) {
         setError(
           `${response.status} (${response.statusText}): ${result.error}`,
         );
+      } else {
+        setData(result);
       }
     } catch (err) {
       setError(err.message);
