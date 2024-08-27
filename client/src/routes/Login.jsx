@@ -6,8 +6,8 @@ export default function Login() {
     <div className="centered-section">
       <h1>log in</h1>
       <Form>
-        <InputField label="username" />
-        <InputField label="password" type="password" />
+        <InputField label="username" required />
+        <InputField label="password" type="password" required />
       </Form>
     </div>
   );
