@@ -21,4 +21,4 @@ Auth is currectly with JWT, but it's likely temporary.
 CREATE DATABASE <database_name>;
 ```
 
-3. fill `server/.env` by `server/.env.example`
+3. fill `server/.env` and `client/.env` by `.../.env.example`
