@@ -60,7 +60,8 @@ a:disabled {
   opacity: 0.5;
 }
 
-button {
+button,
+.link-button {
   width: fit-content;
   padding: 0.5rem 2rem;
 
@@ -85,6 +86,10 @@ a:hover {
 .error {
   background-color: var(--error);
   color: var(--on-error);
+}
+.link-button {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
 }
 
 /* global layout styling */
