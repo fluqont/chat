@@ -16,6 +16,7 @@ export default function useFetch(method = "get") {
               ...options,
             }
           : options;
+      console.log(fetchOptions);
       const response = await fetch(
         import.meta.env.VITE_API_URL + route,
         fetchOptions,
