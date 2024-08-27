@@ -18,7 +18,6 @@ function Root() {
 
   useEffect(() => {
     setUser(data?.user);
-    console.log("Data changed: ", data);
   }, [data]);
 
   return (
