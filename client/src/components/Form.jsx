@@ -1,29 +1,33 @@
-import { node } from "prop-types";
+import { bool, node } from "prop-types";
 import classes from "./Form.module.css";
 
-const Form = ({ children }) => {
+const Form = ({ children, isLoading, ...props }) => {
   return (
-    <form action="" className={classes.form}>
+    <form className={classes.form} {...props}>
       <section className={classes.formMain}>{children}</section>
-      <FormNav />
+      <FormNav isLoading={isLoading} />
     </form>
   );
 };
 Form.propTypes = {
   children: node,
+  isLoading: bool,
 };
 
-const FormNav = () => {
+const FormNav = ({ isLoading }) => {
   return (
     <section className={classes.formNav}>
-      <button type="submit" className="primary">
+      <button type="submit" className="primary" disabled={isLoading}>
         submit
       </button>
-      <button type="reset" className="error">
+      <button type="reset" className="error" disabled={isLoading}>
         reset
       </button>
     </section>
   );
+};
+FormNav.propTypes = {
+  isLoading: bool,
 };
 
 export default Form;
