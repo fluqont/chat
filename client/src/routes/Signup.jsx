@@ -1,9 +1,19 @@
+import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch from "../hooks/useFetch";
+import { useEffect } from "react";
 
 export default function Signup() {
   const { data, error, isLoading, fire } = useFetch();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (data) {
+      return navigate("/login");
+    }
+  }, [data]);
+
   function handleSubmit(event) {
     event.preventDefault();
 
