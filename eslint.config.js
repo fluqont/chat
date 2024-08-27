@@ -7,12 +7,16 @@ import reactRefresh from "eslint-plugin-react-refresh";
 export default [
   { ignores: ["client/dist"] },
   {
-    files: ["server/**/*.{js}"],
+    files: ["server/**/*.js"],
     languageOptions: {
       globals: globals.node,
+      parserOptions: {
+        sourceType: "module",
+      },
     },
     rules: {
       ...js.configs.recommended.rules,
+      "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
     },
   },
   {
