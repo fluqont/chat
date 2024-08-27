@@ -1,11 +1,12 @@
+import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
 
 const Header = () => {
   return (
     <header className={classes.header}>
-      <a href="/" aria-label="home" className={classes.logo}>
+      <Link to="/" aria-label="home" className={classes.logo}>
         PERP
-      </a>
+      </Link>
       <Nav />
     </header>
   );
@@ -14,10 +15,10 @@ const Header = () => {
 const Nav = () => {
   return (
     <nav className={classes.nav}>
-      <a href="/login">log in</a>
-      <a href="/signup" className="link-button primary">
+      <Link to="/login">log in</Link>
+      <Link to="/signup" className="link-button primary">
         sign up
-      </a>
+      </Link>
     </nav>
   );
 };
