@@ -7,10 +7,7 @@ export default function useFetch() {
 
   async function fire(route, options) {
     try {
-      const response = await fetch(
-        "http://localhost:3000/api" + route,
-        options,
-      );
+      const response = await fetch(import.meta.env.API_URL + route, options);
       const result = await response.json();
 
       // http error
