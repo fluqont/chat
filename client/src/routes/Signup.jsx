@@ -25,7 +25,6 @@ export default function Signup() {
       }),
     });
   }
-  console.log(data, error, isLoading);
 
   return (
     <div className="centered-section">

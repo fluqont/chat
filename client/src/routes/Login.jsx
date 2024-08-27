@@ -2,15 +2,17 @@ import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch from "../hooks/useFetch";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { UserContext } from "../context/UserContext";
 
 export default function Login() {
   const { data, error, isLoading, fire } = useFetch("post");
 
   const navigate = useNavigate();
+  const { setToken } = useContext(UserContext);
   useEffect(() => {
-    if (data) {
-      localStorage.setItem("token", data.token);
+    if (data?.token) {
+      setToken(data.token);
       return navigate("/");
     }
   }, [data]);
@@ -26,7 +28,7 @@ export default function Login() {
       }),
     });
   }
-  console.log(data, error, isLoading);
+
   return (
     <div className="centered-section">
       <h1>log in</h1>

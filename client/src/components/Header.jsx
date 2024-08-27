@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import classes from "./Header.module.css";
+import { useContext } from "react";
+import { UserContext } from "../context/UserContext";
 
 const Header = () => {
   return (
@@ -13,12 +15,21 @@ const Header = () => {
 };
 
 const Nav = () => {
+  const { user, setToken } = useContext(UserContext);
   return (
     <nav className={classes.nav}>
-      <Link to="/login">log in</Link>
-      <Link to="/signup" className="link-button primary">
-        sign up
-      </Link>
+      {user ? (
+        <button className="primary" onClick={() => setToken(null)}>
+          log out
+        </button>
+      ) : (
+        <>
+          <Link to="/login">log in</Link>
+          <Link to="/signup" className="link-button primary">
+            sign up
+          </Link>
+        </>
+      )}
     </nav>
   );
 };
