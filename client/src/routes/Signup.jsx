@@ -25,8 +25,6 @@ export default function Signup() {
       }),
     );
     fire("/auth/signup", {
-      method: "post",
-      headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
         username: data.get("username"),
         password: data.get("password"),

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { postOptions } from "../const";
 
-export default function useFetch() {
+export default function useFetch(method = "get") {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -8,9 +9,16 @@ export default function useFetch() {
   async function fire(route, options) {
     setIsLoading(true);
     try {
+      const fetchOptions =
+        method === "post"
+          ? {
+              ...postOptions,
+              ...options,
+            }
+          : options;
       const response = await fetch(
         import.meta.env.VITE_API_URL + route,
-        options,
+        fetchOptions,
       );
       const result = await response.json();
 
