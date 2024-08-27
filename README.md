@@ -11,14 +11,16 @@ Auth is currectly with JWT, but it's likely temporary.
 
 # Usage
 
-1. `cd server && npm install`
+1. `npm install`
 
-2. `cd ../client && npm install`
+2. `cd server && npm install`
 
-3.
+3. `cd ../client && npm install`
+
+4.
 
 ```sql
 CREATE DATABASE <database_name>;
 ```
 
-3. fill `server/.env` and `client/.env` by `.../.env.example`
+5. fill `server/.env` and `client/.env` by `.../.env.example`
