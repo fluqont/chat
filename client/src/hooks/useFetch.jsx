@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-export default function useFetch(route, options) {
+export default function useFetch() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  async function fire() {
+  async function fire(route, options) {
     try {
       const response = await fetch(
         "http://localhost:3000/api" + route,
