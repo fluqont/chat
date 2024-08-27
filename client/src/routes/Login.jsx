@@ -34,8 +34,13 @@ export default function Login() {
       <h1>log in</h1>
       <Form isLoading={isLoading} method="post" onSubmit={handleSubmit}>
         {error && <p aria-live="polite">{error}</p>}
-        <InputField label="username" required />
-        <InputField label="password" type="password" required />
+        <InputField label="username" required autoComplete="username" />
+        <InputField
+          label="password"
+          type="password"
+          required
+          autoComplete="current-password"
+        />
       </Form>
     </div>
   );

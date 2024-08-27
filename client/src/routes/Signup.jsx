@@ -31,13 +31,20 @@ export default function Signup() {
       <h1>sign up</h1>
       <Form isLoading={isLoading} method="post" onSubmit={handleSubmit}>
         {error && <p aria-live="polite">{error}</p>}
-        <InputField label="username" required minLength="1" maxLength="30" />
+        <InputField
+          label="username"
+          required
+          minLength="1"
+          maxLength="30"
+          autoComplete="username"
+        />
         <InputField
           label="password"
           type="password"
           required
           minLength="1"
           maxLength="255"
+          autoComplete="current-password"
         />
       </Form>
     </div>
