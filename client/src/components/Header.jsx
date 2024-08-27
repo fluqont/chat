@@ -19,9 +19,12 @@ const Nav = () => {
   return (
     <nav className={classes.nav}>
       {user ? (
-        <button className="primary" onClick={() => setToken(null)}>
-          log out
-        </button>
+        <>
+          <p>{user.username}</p>
+          <button className="primary" onClick={() => setToken(null)}>
+            log out
+          </button>
+        </>
       ) : (
         <>
           <Link to="/login">log in</Link>
