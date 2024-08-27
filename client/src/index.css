@@ -98,6 +98,13 @@ body {
   max-width: 1024px;
   margin: auto;
 }
+h1 {
+  margin-bottom: 1rem;
+}
+.centered-section {
+  width: fit-content;
+  margin: auto;
+}
 
 /* dark mode variables */
 @media screen and (prefers-color-scheme: dark) {

@@ -1,0 +1,23 @@
+.input-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.label {
+  font-weight: 500;
+}
+
+.input {
+  min-width: 0;
+  width: fit-content;
+
+  outline: 1px solid var(--outline);
+
+  background-color: var(--surface);
+  border-radius: var(--rounded-card);
+  font-size: 2rem;
+  padding: 0.5rem 2rem;
+}
+.input:focus {
+  outline: 2px solid var(--primary);
+}

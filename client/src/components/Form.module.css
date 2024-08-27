@@ -1,0 +1,14 @@
+.form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-main {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-nav {
+  display: flex;
+  gap: 0.5rem;
+}
