@@ -1,4 +1,4 @@
-import prisma from "../prisma/index.js";
+import prisma from "../configs/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -21,15 +21,14 @@ export async function signupPost(req, res, next) {
       return res.status(400).json({ error: "Username is not unique." });
     }
 
-    const hashedPassword = await bcrypt.hash(username, 5);
+    const hashedPassword = await bcrypt.hash(password, 5);
     const user = await prisma.user.create({
       data: {
         username: username,
         password: hashedPassword,
       },
     });
-    res.json({ user });
-    // ! TODO: send OK
+    res.json({ user: user });
   } catch (err) {
     next(err);
   }
@@ -83,6 +82,7 @@ export async function authGet(req, res, next) {
 
     const user = jwt.verify(token, process.env.SECRET);
 
+    req.locals.user = user;
     res.json({ user: user });
   } catch (err) {
     res.status(401).json({ error: "Unauthorized." });
