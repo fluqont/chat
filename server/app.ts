@@ -1,10 +1,10 @@
 import "dotenv/config";
-import express, { json, urlencoded } from "express";
+import express, { json, Request, urlencoded } from "express";
 import cors from "cors";
 import apiRouter from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 const app = express();
-app.use(cors());
+app.use(cors<Request>());
 app.use(json());
 app.use(urlencoded({ extended: true }));
 

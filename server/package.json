@@ -4,7 +4,7 @@
   "private": "true",
   "type": "module",
   "scripts": {
-    "start": "node --watch app.js",
+    "start": "tsc && node --watch dist/app.js",
     "test": "NODE_ENV=test && node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "dependencies": {
@@ -18,7 +18,13 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^22.5.2",
     "jest": "^29.7.0",
-    "supertest": "^7.0.0"
+    "supertest": "^7.0.0",
+    "typescript": "^5.5.4"
   }
 }

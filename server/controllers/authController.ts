@@ -2,8 +2,13 @@ import prisma from "../configs/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ErrorWithStatus } from "../middlewares/errorHandler.js";
+import { NextFunction, Request, Response } from "express";
 
-export async function signupPost(req, res, next) {
+export async function signupPost(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const { username, password } = req.body;
 
   try {
@@ -30,7 +35,11 @@ export async function signupPost(req, res, next) {
   }
 }
 
-export async function loginPost(req, res, next) {
+export async function loginPost(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const { username, password } = req.body;
 
   try {
@@ -61,16 +70,17 @@ export async function loginPost(req, res, next) {
   }
 }
 
-export async function authGet(req, res, next) {
+export async function authGet(req: Request, res: Response, next: NextFunction) {
   try {
     const bearerHeader = req.header("Authorization");
-    const token = bearerHeader.split(" ")[1];
+    // ignore ts because we will catch an error anyway
+    const token = bearerHeader!.split(" ")[1];
 
     const user = jwt.verify(token, process.env.SECRET);
 
     res.locals.user = user;
     res.json({ user: user });
-  } catch (err) {
+  } catch (err: any) {
     err.statusCode = 401;
     next(err);
   }
