@@ -1,0 +1,3 @@
+- [ ] move to typescript
+- [ ] add prisma unit testing (maybe)
+- [ ] add integration testing with Docker
