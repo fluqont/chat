@@ -5,7 +5,7 @@ import useFetch from "../hooks/useFetch";
 import { useEffect } from "react";
 
 export default function Signup() {
-  const { data, error, isLoading, fire } = useFetch("post");
+  const { data, error, isLoading, fetchData } = useFetch();
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -18,7 +18,9 @@ export default function Signup() {
     event.preventDefault();
 
     const data = new FormData(event.target);
-    fire("/auth/signup", {
+    fetchData("/auth/signup", {
+      method: "post",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
         username: data.get("username"),
         password: data.get("password"),

@@ -1,41 +1,40 @@
-import { useState } from "react";
-import { postOptions } from "../const";
+import { useRef, useState } from "react";
 
-export default function useFetch(method = "get") {
+export default function useFetch() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function fire(route, options) {
-    setIsLoading(true);
-    try {
-      const fetchOptions =
-        method === "post"
-          ? {
-              ...postOptions,
-              ...options,
-            }
-          : options;
-      const response = await fetch(
-        import.meta.env.VITE_API_URL + route,
-        fetchOptions,
-      );
-      const result = await response.json();
+  const abortControllerRef = useRef(null);
+  async function fetchData(url, options) {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
 
-      // http error
-      if (response.ok || response.status === 401) {
-        setData(result);
-      } else {
-        setError(
-          `${response.status} (${response.statusText}): ${result.error}`,
-        );
+    setIsLoading(true);
+
+    try {
+      const fetchArgs = [
+        import.meta.env.VITE_API_URL + url,
+        {
+          signal: abortControllerRef.current?.signal,
+          ...options,
+        },
+      ];
+      const response = await fetch(...fetchArgs);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error);
       }
+      setData(data);
+      setError(null);
+      return data;
     } catch (err) {
+      setData(null);
       setError(err.message);
     } finally {
       setIsLoading(false);
     }
   }
 
-  return { data, error, isLoading, fire };
+  return { data, error, isLoading, fetchData };
 }

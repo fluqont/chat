@@ -9,7 +9,6 @@
 
 .input {
   min-width: 0;
-  width: fit-content;
 
   outline: 1px solid var(--outline);
 
@@ -20,4 +19,8 @@
 }
 .input:focus {
   outline: 2px solid var(--primary);
+}
+textarea.input {
+  font-size: 1.25rem;
+  padding: 1rem 2rem;
 }

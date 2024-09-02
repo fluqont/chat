@@ -8,12 +8,12 @@ function Root() {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const { data, fire } = useFetch();
+  const { data, fetchData } = useFetch();
 
   useEffect(() => {
     localStorage.setItem("token", token);
 
-    fire("/auth", { headers: { Authorization: `Bearer ${token}` } });
+    fetchData("/auth", { headers: { Authorization: `Bearer ${token}` } });
   }, [token]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function Root() {
   }, [data]);
 
   return (
-    <UserContext.Provider value={{ user, setToken }}>
+    <UserContext.Provider value={{ user, token, setToken }}>
       <Header />
       <main>
         <Outlet />

@@ -6,7 +6,7 @@ import { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 
 export default function Login() {
-  const { data, error, isLoading, fire } = useFetch("post");
+  const { data, error, isLoading, fetchData } = useFetch();
 
   const navigate = useNavigate();
   const { setToken } = useContext(UserContext);
@@ -21,7 +21,9 @@ export default function Login() {
     event.preventDefault();
 
     const data = new FormData(event.target);
-    fire("/auth/login", {
+    fetchData("/auth/login", {
+      method: "post",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
         username: data.get("username"),
         password: data.get("password"),

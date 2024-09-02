@@ -1,13 +1,14 @@
-import { string } from "prop-types";
+import { bool, string } from "prop-types";
 import classes from "./InputField.module.css";
 
-const InputField = ({ label, ...inputProps }) => {
+const InputField = ({ label, textarea = false, ...inputProps }) => {
   return (
     <div className={classes.inputField}>
       <label htmlFor={label} className={classes.label}>
         {label}
       </label>
-      <input
+      <Input
+        textarea={textarea}
         {...inputProps}
         name={label}
         id={label}
@@ -18,5 +19,15 @@ const InputField = ({ label, ...inputProps }) => {
 };
 InputField.propTypes = {
   label: string,
+  textarea: bool,
 };
+
+const Input = ({ textarea, ...props }) => {
+  if (textarea) return <textarea rows={15} {...props}></textarea>;
+  return <input {...props} />;
+};
+Input.propTypes = {
+  textarea: bool,
+};
+
 export default InputField;
