@@ -1,8 +1,9 @@
+import { RouteObject } from "react-router-dom";
 import Login from "./routes/Login";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
 
-const routes = [
+const routes: RouteObject[] = [
   {
     path: "/",
     element: <Root />,
@@ -17,6 +18,6 @@ const routes = [
       },
     ],
   },
-];
+] as const;
 
 export default routes;

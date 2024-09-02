@@ -1,26 +1,24 @@
 import { useRef, useState } from "react";
 
 export default function useFetch() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState<null | Record<string, any>>(null);
+  const [error, setError] = useState<null | string>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const abortControllerRef = useRef(null);
-  async function fetchData(url, options) {
+  const abortControllerRef = useRef<null | AbortController>(null);
+  async function fetchData(url: string, options: RequestInit) {
     abortControllerRef.current?.abort();
     abortControllerRef.current = new AbortController();
 
     setIsLoading(true);
 
     try {
-      const fetchArgs = [
-        import.meta.env.VITE_API_URL + url,
-        {
-          signal: abortControllerRef.current?.signal,
-          ...options,
-        },
-      ];
-      const response = await fetch(...fetchArgs);
+      url = import.meta.env.VITE_API_URL + url;
+      options = {
+        signal: abortControllerRef.current?.signal,
+        ...options,
+      };
+      const response = await fetch(url, options);
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error);
@@ -28,7 +26,7 @@ export default function useFetch() {
       setData(data);
       setError(null);
       return data;
-    } catch (err) {
+    } catch (err: any) {
       setData(null);
       setError(err.message);
     } finally {

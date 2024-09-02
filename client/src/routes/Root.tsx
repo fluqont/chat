@@ -1,17 +1,17 @@
 import { Outlet } from "react-router-dom";
 import Header from "../components/Header";
-import { UserContext } from "../context/UserContext";
+import { User, UserContext } from "../context/UserContext";
 import { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
 
 function Root() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
   const { data, fetchData } = useFetch();
 
   useEffect(() => {
-    localStorage.setItem("token", token);
+    localStorage.setItem("token", token ?? "");
 
     fetchData("/auth", { headers: { Authorization: `Bearer ${token}` } });
   }, [token]);

@@ -1,7 +1,12 @@
-import { bool, node } from "prop-types";
 import classes from "./Form.module.css";
+import { FormHTMLAttributes, ReactNode } from "react";
 
-const Form = ({ children, isLoading, ...props }) => {
+interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
+  children: ReactNode;
+  isLoading: boolean;
+}
+
+const Form = ({ children, isLoading, ...props }: FormProps) => {
   return (
     <form className={classes.form} {...props}>
       <section className={classes.formMain}>{children}</section>
@@ -9,12 +14,12 @@ const Form = ({ children, isLoading, ...props }) => {
     </form>
   );
 };
-Form.propTypes = {
-  children: node,
-  isLoading: bool,
-};
 
-const FormNav = ({ isLoading }) => {
+interface FormNavProps {
+  isLoading: boolean;
+}
+
+const FormNav = ({ isLoading }: FormNavProps) => {
   return (
     <section className={classes.formNav}>
       <button type="submit" className="primary" disabled={isLoading}>
@@ -25,9 +30,6 @@ const FormNav = ({ isLoading }) => {
       </button>
     </section>
   );
-};
-FormNav.propTypes = {
-  isLoading: bool,
 };
 
 export default Form;

@@ -2,26 +2,23 @@ import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch from "../hooks/useFetch";
-import { useContext, useEffect } from "react";
-import { UserContext } from "../context/UserContext";
+import { FormEvent, useEffect } from "react";
 
-export default function Login() {
+export default function Signup() {
   const { data, error, isLoading, fetchData } = useFetch();
 
   const navigate = useNavigate();
-  const { setToken } = useContext(UserContext);
   useEffect(() => {
-    if (data?.token) {
-      setToken(data.token);
-      return navigate("/");
+    if (data) {
+      return navigate("/login");
     }
   }, [data]);
 
-  function handleSubmit(event) {
+  function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    const data = new FormData(event.target);
-    fetchData("/auth/login", {
+    const data = new FormData(event.target as HTMLFormElement);
+    fetchData("/auth/signup", {
       method: "post",
       headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
@@ -33,14 +30,22 @@ export default function Login() {
 
   return (
     <div className="centered-section">
-      <h1>log in</h1>
+      <h1>sign up</h1>
       <Form isLoading={isLoading} method="post" onSubmit={handleSubmit}>
         {error && <p aria-live="polite">{error}</p>}
-        <InputField label="username" required autoComplete="username" />
+        <InputField
+          label="username"
+          required
+          minLength={1}
+          maxLength={30}
+          autoComplete="username"
+        />
         <InputField
           label="password"
           type="password"
           required
+          minLength={1}
+          maxLength={255}
           autoComplete="current-password"
         />
       </Form>
