@@ -1,14 +1,10 @@
 import prisma from "../configs/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { ErrorWithStatus } from "../middlewares/errorHandler.js";
 
 export async function signupPost(req, res, next) {
   const { username, password } = req.body;
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username or password is not provided." });
-  }
 
   try {
     const userExists = await prisma.user.findUnique({
@@ -18,7 +14,7 @@ export async function signupPost(req, res, next) {
     });
 
     if (userExists) {
-      return res.status(400).json({ error: "Username is not unique." });
+      return next(new ErrorWithStatus("Username is not unique", 400));
     }
 
     const hashedPassword = await bcrypt.hash(password, 5);
@@ -37,12 +33,6 @@ export async function signupPost(req, res, next) {
 export async function loginPost(req, res, next) {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username or password is not provided." });
-  }
-
   try {
     const user = await prisma.user.findUnique({
       where: {
@@ -50,16 +40,12 @@ export async function loginPost(req, res, next) {
       },
     });
     if (!user) {
-      return res.status(400).json({
-        error: "Incorrect username.",
-      });
+      return next(new ErrorWithStatus("Incorrect username", 400));
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(400).json({
-        error: "Incorrect password.",
-      });
+      return next(new ErrorWithStatus("Incorrect password", 400));
     }
 
     const token = jwt.sign(
@@ -82,9 +68,10 @@ export async function authGet(req, res, next) {
 
     const user = jwt.verify(token, process.env.SECRET);
 
-    req.locals.user = user;
+    res.locals.user = user;
     res.json({ user: user });
   } catch (err) {
-    res.status(401).json({ error: "Unauthorized." });
+    err.statusCode = 401;
+    next(err);
   }
 }
