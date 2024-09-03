@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
-// TODO: use underscores for unused
 export default function errorHandler(
   err: ErrorWithStatus,
-  req: Request,
+  _: Request,
   res: Response,
-  next: NextFunction,
+  __: NextFunction,
 ) {
   console.error(err.message, err.stack);
 
