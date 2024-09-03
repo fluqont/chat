@@ -18,7 +18,6 @@ export default function useFetch() {
         signal: abortControllerRef.current?.signal,
         ...options,
       };
-      console.log(url, options);
       const response = await fetch(url, options);
       const data = await response.json();
       if (!response.ok) {

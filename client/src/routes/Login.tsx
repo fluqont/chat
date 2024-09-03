@@ -1,10 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch from "../hooks/useFetch";
-import { FormEvent } from "react";
+import { FormEvent, useContext, useEffect } from "react";
+import { UserContext } from "../context/UserContext";
 
 export default function Login() {
-  const { error, isLoading, fetchData } = useFetch();
+  const navigate = useNavigate();
+  const { data, error, isLoading, fetchData } = useFetch();
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -19,6 +22,14 @@ export default function Login() {
       }),
     });
   }
+
+  const { setUser } = useContext(UserContext);
+  useEffect(() => {
+    if (data) {
+      setUser(data.user);
+      navigate("/");
+    }
+  }, [data]);
 
   return (
     <div className="centered-section">

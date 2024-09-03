@@ -5,6 +5,7 @@ declare global {
       PORT: string;
       DATABASE_URL: string;
       TEST_DATABASE_URL: string;
+      CLIENT_URL: string;
       SECRET: string;
     }
   }

@@ -23,10 +23,7 @@ export async function signupPost(
 
     const hashedPassword = await bcrypt.hash(password, 5);
     const user = await prisma.user.create({
-      data: {
-        username: username,
-        password: hashedPassword,
-      },
+      data: { username: username, password: hashedPassword },
     });
     res.json({ user: user });
   } catch (err) {
@@ -35,9 +32,9 @@ export async function signupPost(
 }
 
 export async function authGet(req: Request, res: Response, next: NextFunction) {
-  const user = res.locals.user;
+  const user = req.user;
   if (!user) {
-    return next(new ErrorWithStatus("Unauthorized", 401));
+    return next(new ErrorWithStatus("Authorization error", 401));
   }
 
   res.json({ user: user });

@@ -20,9 +20,11 @@ const Nav = () => {
 
   const { fetchData } = useFetch();
 
-  const user = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   function logout() {
+    // TODO: add log out
     fetchData("/auth/logout");
+    setUser(null);
     navigate("/");
   }
   return (
