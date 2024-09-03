@@ -1,0 +1,17 @@
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  margin-bottom: 2rem;
+}
+
+.logo {
+  width: fit-content;
+  font-size: 2rem;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
