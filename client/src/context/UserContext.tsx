@@ -1,18 +1,8 @@
-import { createContext, Dispatch, SetStateAction } from "react";
+import { createContext } from "react";
 
 export interface User {
   id: number;
   username: string;
 }
 
-interface IUserContext {
-  user: User | null;
-  token: string | null;
-  setToken: Dispatch<SetStateAction<IUserContext["token"]>>;
-}
-
-export const UserContext = createContext<IUserContext>({
-  user: null,
-  token: null,
-  setToken: () => {},
-});
+export const UserContext = createContext<User | null>(null);

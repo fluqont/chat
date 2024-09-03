@@ -6,22 +6,22 @@ import useFetch from "../hooks/useFetch";
 
 function Root() {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
 
-  const { data, fetchData } = useFetch();
-
-  useEffect(() => {
-    localStorage.setItem("token", token ?? "");
-
-    fetchData("/auth", { headers: { Authorization: `Bearer ${token}` } });
-  }, [token]);
+  const { data, error, fetchData } = useFetch();
 
   useEffect(() => {
-    setUser(data?.user);
-  }, [data]);
+    fetchData("/auth");
+  }, []);
+
+  useEffect(() => {
+    console.log(error);
+    if (data && data.user) {
+      setUser(data.user);
+    }
+  }, [data, error]);
 
   return (
-    <UserContext.Provider value={{ user, token, setToken }}>
+    <UserContext.Provider value={user}>
       <Header />
       <main>
         <Outlet />

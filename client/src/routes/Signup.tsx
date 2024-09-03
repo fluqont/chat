@@ -9,7 +9,7 @@ export default function Signup() {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (data) {
+    if (data && data.user) {
       return navigate("/login");
     }
   }, [data]);

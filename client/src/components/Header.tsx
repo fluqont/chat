@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "./Header.module.css";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import useFetch from "../hooks/useFetch";
 
 const Header = () => {
   return (
@@ -17,9 +18,11 @@ const Header = () => {
 const Nav = () => {
   const navigate = useNavigate();
 
-  const { user, setToken } = useContext(UserContext);
+  const { fetchData } = useFetch();
+
+  const user = useContext(UserContext);
   function logout() {
-    setToken(null);
+    fetchData("/auth/logout");
     navigate("/");
   }
   return (

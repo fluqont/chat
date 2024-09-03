@@ -1,21 +1,10 @@
-import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch from "../hooks/useFetch";
-import { FormEvent, useContext, useEffect } from "react";
-import { UserContext } from "../context/UserContext";
+import { FormEvent } from "react";
 
 export default function Login() {
-  const { data, error, isLoading, fetchData } = useFetch();
-
-  const navigate = useNavigate();
-  const { setToken } = useContext(UserContext);
-  useEffect(() => {
-    if (data?.token) {
-      setToken(data.token);
-      return navigate("/");
-    }
-  }, [data]);
+  const { error, isLoading, fetchData } = useFetch();
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
