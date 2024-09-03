@@ -31,6 +31,15 @@ export async function signupPost(
   }
 }
 
+export function logoutGet(req: Request, res: Response, next: NextFunction) {
+  req.logout((err) => {
+    if (err) {
+      return next(new ErrorWithStatus("Log out error", 500));
+    }
+  });
+  res.json({ message: "OK" });
+}
+
 export async function authGet(req: Request, res: Response, next: NextFunction) {
   const user = req.user;
   if (!user) {

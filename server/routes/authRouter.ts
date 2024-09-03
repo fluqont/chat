@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { authGet, signupPost } from "../controllers/authController.js";
+import {
+  authGet,
+  logoutGet,
+  signupPost,
+} from "../controllers/authController.js";
 import passport from "passport";
 const router = Router();
 
@@ -12,6 +16,7 @@ router.post(
   }),
   authGet,
 );
+router.get("/logout", logoutGet);
 router.get("/", authGet);
 
 export default router;

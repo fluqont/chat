@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./Header.module.css";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import useFetch from "../hooks/useFetch";
 
@@ -18,15 +18,19 @@ const Header = () => {
 const Nav = () => {
   const navigate = useNavigate();
 
-  const { fetchData } = useFetch();
+  const { data, fetchData } = useFetch();
 
   const { user, setUser } = useContext(UserContext);
   function logout() {
-    // TODO: add log out
     fetchData("/auth/logout");
-    setUser(null);
-    navigate("/");
   }
+
+  useEffect(() => {
+    if (data && data.message === "OK") {
+      setUser(null);
+      navigate("/");
+    }
+  }, [data]);
   return (
     <nav className={classes.nav}>
       {user ? (
