@@ -7,7 +7,7 @@ I dislike using stack acronyms, but I didn't come up with a better name for this
 - R - React
 - P - Prisma
 
-Auth is currectly with JWT, but it's likely temporary.
+This is a branch with session-based auth. There is a branch with JWT auth
 
 # Usage
 
