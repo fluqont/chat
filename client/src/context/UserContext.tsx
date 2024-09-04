@@ -29,7 +29,7 @@ const Context = ({ children }: PropsWithChildren) => {
   const { data, fetchData } = useFetch();
 
   useEffect(() => {
-    fetchData("/auth");
+    fetchData("/auth", { credentials: "include" });
   }, []);
 
   useEffect(() => {
