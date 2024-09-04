@@ -72,9 +72,10 @@ model Message {
   sender      User         @relation(name: "Messages", fields: [senderId], references: [id])
   text        String       @db.VarChar(255) // encrypted
   senderId    Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id])
   recipientId Int
-  createdAt   DateTime     @default(now())
   attachments Attachment[]
 }
 
