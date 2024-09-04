@@ -1,0 +1,3 @@
+- [ ] use postcss-material-colors and @sinskiy/ui for styling
+- [ ] add prisma unit testing (maybe)
+- [ ] add integration testing with Docker

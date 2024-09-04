@@ -20,6 +20,7 @@ export default function Login() {
         username: data.get("username"),
         password: data.get("password"),
       }),
+      credentials: "include",
     });
   }
 

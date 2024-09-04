@@ -32,6 +32,7 @@ export async function signupPost(
 }
 
 export function logoutGet(req: Request, res: Response, next: NextFunction) {
+  res.clearCookie("connect.sid");
   req.logout((err) => {
     if (err) {
       return next(new ErrorWithStatus("Log out error", 500));

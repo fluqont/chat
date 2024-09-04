@@ -22,7 +22,7 @@ const Nav = () => {
 
   const { user, setUser } = useContext(UserContext);
   function logout() {
-    fetchData("/auth/logout");
+    fetchData("/auth/logout", { credentials: "include" });
   }
 
   useEffect(() => {

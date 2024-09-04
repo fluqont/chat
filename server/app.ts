@@ -4,6 +4,7 @@ import cors from "cors";
 import session from "express-session";
 import apiRouter from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import notFoundHandler from "./middlewares/notFoundHandler.js";
 import passport, { prismaStore } from "./configs/auth.js";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(passport.session());
 
 app.use("/api", apiRouter);
 
+app.use(notFoundHandler);
 app.use(errorHandler);
 
 const port = process.env.PORT ?? 3000;
