@@ -75,7 +75,7 @@ model Message {
   recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id])
   recipientId Int
   createdAt   DateTime     @default(now())
-  Attachment  Attachment[]
+  attachments Attachment[]
 }
 
 model Attachment {
