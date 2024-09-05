@@ -23,7 +23,11 @@ export async function signupPost(
 
     const hashedPassword = await bcrypt.hash(password, 5);
     await prisma.user.create({
-      data: { username: username, password: hashedPassword },
+      data: {
+        username: username,
+        password: hashedPassword,
+        status: { create: { type: "ONLINE" } },
+      },
     });
     res.json({ message: "OK" });
   } catch (err) {
