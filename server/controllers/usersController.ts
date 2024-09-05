@@ -50,13 +50,17 @@ export async function userGet(req: Request, res: Response, next: NextFunction) {
       include: { messages: true, gottenMessages: true },
     });
 
-    const decryptedMessages = decryptMessages([
+    const decryptedSortedMessages = decryptMessages([
       ...user.messages,
       ...user.gottenMessages,
-    ]);
+    ]).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     res.json({
-      user: { ...user, messages: decryptedMessages, gottenMessages: undefined },
+      user: {
+        ...user,
+        messages: decryptedSortedMessages,
+        gottenMessages: undefined,
+      },
     });
   } catch (err) {
     next(err);
@@ -75,9 +79,11 @@ export async function friendGet(
       include: { status: true, messages: true },
     });
 
-    const decryptedMessages = decryptMessages(user.messages);
+    const decryptedSortedMessages = decryptMessages(user.messages).sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
 
-    res.json({ user: { ...user, messages: decryptedMessages } });
+    res.json({ user: { ...user, messages: decryptedSortedMessages } });
   } catch (err) {
     next(err);
   }
