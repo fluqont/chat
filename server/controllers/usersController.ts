@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
-import { StatusType } from "@prisma/client";
+import { StatusType, User } from "@prisma/client";
 import { decryptMessages } from "../helpers.js";
 
 export async function userByUsernameGet(
@@ -55,7 +55,9 @@ export async function userGet(req: Request, res: Response, next: NextFunction) {
       ...user.gottenMessages,
     ]);
 
-    res.json({ user: { ...user, messages: decryptedMessages } });
+    res.json({
+      user: { ...user, messages: decryptedMessages, gottenMessages: undefined },
+    });
   } catch (err) {
     next(err);
   }
