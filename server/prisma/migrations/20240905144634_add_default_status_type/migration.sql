@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Status" ALTER COLUMN "type" SET DEFAULT 'OFFLINE';

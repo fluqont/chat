@@ -32,7 +32,7 @@ model Status {
   id        Int        @id @default(autoincrement())
   user      User       @relation(fields: [userId], references: [id])
   userId    Int        @unique
-  type      StatusType
+  type      StatusType @default(OFFLINE)
   updatedAt DateTime   @updatedAt
 }
 
