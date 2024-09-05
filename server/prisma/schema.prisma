@@ -30,7 +30,7 @@ model Session {
 
 model Status {
   id        Int        @id @default(autoincrement())
-  user      User       @relation(fields: [userId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int        @unique
   type      StatusType @default(ONLINE)
   updatedAt DateTime   @updatedAt
@@ -44,43 +44,43 @@ enum StatusType {
 
 model FriendRequest {
   id              Int  @id @default(autoincrement())
-  user            User @relation(name: "Requests", fields: [userId], references: [id])
+  user            User @relation(name: "Requests", fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
-  requestedUser   User @relation(name: "Requested", fields: [requestedUserId], references: [id])
+  requestedUser   User @relation(name: "Requested", fields: [requestedUserId], references: [id], onDelete: Cascade)
   requestedUserId Int
 }
 
 model Group {
-  id           Int            @id @default(autoincrement())
-  name         String         @db.VarChar(30)
-  creator      User           @relation(name: "CreatedGroups", fields: [creatorId], references: [id])
-  creatorId    Int
-  members      User[]         @relation(name: "Groups")
-  GroupRequest GroupRequest[]
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(30)
+  creator       User           @relation(name: "CreatedGroups", fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId     Int
+  members       User[]         @relation(name: "Groups")
+  groupRequests GroupRequest[]
 }
 
 model GroupRequest {
   id      Int   @id @default(autoincrement())
-  group   Group @relation(fields: [groupId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId Int
-  user    User  @relation(fields: [userId], references: [id])
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId  Int
 }
 
 model Message {
   id          Int          @id @default(autoincrement())
-  sender      User         @relation(name: "Messages", fields: [senderId], references: [id])
+  sender      User         @relation(name: "Messages", fields: [senderId], references: [id], onDelete: Cascade)
   text        String       @db.VarChar(255) // encrypted
   senderId    Int
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id])
+  recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id], onDelete: Cascade)
   recipientId Int
   attachments Attachment[]
 }
 
 model Attachment {
   id        Int     @id @default(autoincrement())
-  message   Message @relation(fields: [messageId], references: [id])
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId Int
 }
