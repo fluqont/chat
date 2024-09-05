@@ -2,12 +2,71 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 import { StatusType } from "@prisma/client";
 
-export async function userGet(req: Request, res: Response, next: NextFunction) {
+export async function userByUsernameGet(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const { username } = req.query;
   try {
     const user = await prisma.user.findUnique({
       where: { username: username as string },
     });
+    res.json({ user: user });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function userGet(req: Request, res: Response, next: NextFunction) {
+  const { userId, partnerId } = req.params;
+  try {
+    const relatedFriendRequests = await prisma.friendRequest.findMany({
+      where: {
+        OR: [
+          {
+            AND: [
+              { userId: Number(userId) },
+              { requestedUserId: Number(partnerId) },
+            ],
+          },
+          {
+            AND: [
+              { requestedUserId: Number(userId) },
+              { userId: Number(partnerId) },
+            ],
+          },
+        ],
+      },
+    });
+
+    if (relatedFriendRequests.length === 2) {
+      return next();
+    }
+
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: Number(partnerId) },
+      include: { messages: true },
+    });
+
+    res.json({ user: user });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function friendGet(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { partnerId } = req.params;
+  try {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: Number(partnerId) },
+      include: { status: true, messages: true },
+    });
+
     res.json({ user: user });
   } catch (err) {
     next(err);
