@@ -6,6 +6,7 @@ import classes from "./Messages.module.css";
 interface MessagesProps {
   partner: User;
   messages: Array<{
+    id: number;
     author: "user" | "partner";
     text: string;
   }>;
@@ -18,6 +19,7 @@ const Messages = ({ partner, messages }: MessagesProps) => {
       {messages.length > 0 ? (
         messages.map((message) => (
           <article
+            key={message.id}
             className={[classes.message, classes[message.author]].join(" ")}
           >
             {message.text}
