@@ -9,12 +9,13 @@ interface MessagesProps {
   partner: User;
   messages: Array<{
     id: number;
-    author: "user" | "partner";
+    senderId: number;
     text: string;
   }>;
+  fetchMessages: (partnerId: string) => void;
 }
 
-const Messages = ({ partner, messages }: MessagesProps) => {
+const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
   const { fetchData, error, isLoading } = useFetch();
 
   const { user } = useContext(UserContext);
@@ -29,8 +30,9 @@ const Messages = ({ partner, messages }: MessagesProps) => {
       headers: { "Content-Type": "application/json; charset=UTF-8" },
       credentials: "include",
       body: JSON.stringify({ text: data.get("message"), attachmentIds: [] }),
-    });
+    }).then(() => fetchMessages(String(partner.id)));
   }
+
   return (
     <section className={classes.messages}>
       <h2>{partner.username}</h2>
@@ -38,7 +40,10 @@ const Messages = ({ partner, messages }: MessagesProps) => {
         messages.map((message) => (
           <article
             key={message.id}
-            className={[classes.message, classes[message.author]].join(" ")}
+            className={[
+              classes.message,
+              classes[message.senderId === partner.id ? "partner" : "user"],
+            ].join(" ")}
           >
             {message.text}
           </article>

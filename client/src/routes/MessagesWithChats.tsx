@@ -32,18 +32,19 @@ export default function MessagesWithChats() {
     isLoading: areMessagesLoading,
   } = useFetch();
 
+  function messagesFetch(partnerId: string) {
+    fetchMessages(`/users/${user?.id}/messages/${partnerId}`).then((data) =>
+      setMessages(data),
+    );
+  }
   useEffect(() => {
     const partnerId = searchParams.get("partner-id");
     if (user && partnerId) {
-      fetchMessages(`/users/${user?.id}/messages/${partnerId}`).then((data) =>
-        setMessages(data),
-      );
+      messagesFetch(partnerId);
     } else {
       setMessages([]);
     }
   }, [user, searchParams]);
-
-  console.log(messages);
 
   return (
     <section className={classes.section}>
@@ -62,6 +63,7 @@ export default function MessagesWithChats() {
         <Messages
           partner={userWithMessages?.user}
           messages={userWithMessages?.user.messages}
+          fetchMessages={messagesFetch}
         />
       )}
     </section>
