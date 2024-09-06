@@ -28,10 +28,13 @@ function User() {
       }),
     });
   }
+  function handleDeleteSubmit() {
+    fetchData(`/users/${user?.id}`, { method: "DELETE" });
+  }
 
   useEffect(() => {
-    if (data && data.user) {
-      setUser(data.user);
+    if (data) {
+      setUser(data?.user);
       navigate("/");
     }
   }, [data]);
@@ -43,6 +46,13 @@ function User() {
         {error && <p aria-live="polite">{error}</p>}
         <InputField label="username" defaultValue={user?.username} />
       </Form>
+      <button
+        onClick={handleDeleteSubmit}
+        className="error"
+        style={{ marginTop: "2rem", width: "100%" }}
+      >
+        delete user
+      </button>
     </section>
   );
 }
