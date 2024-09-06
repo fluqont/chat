@@ -117,8 +117,6 @@ export async function friendGet(
       ...user.gottenMessages,
     ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-    console.log(decryptedSortedMessages, user.gottenMessages, user.messages);
-
     res.json({ user: { ...user, messages: decryptedSortedMessages } });
   } catch (err) {
     next(err);

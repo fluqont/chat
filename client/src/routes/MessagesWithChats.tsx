@@ -43,6 +43,8 @@ export default function MessagesWithChats() {
     }
   }, [user, searchParams]);
 
+  console.log(messages);
+
   return (
     <section className={classes.section}>
       {!chats && isChatsLoading && <p>loading...</p>}
