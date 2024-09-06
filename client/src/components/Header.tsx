@@ -3,12 +3,14 @@ import classes from "./Header.module.css";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import useFetch from "../hooks/useFetch";
+import { MessageCircle } from "lucide-react";
 
 const Header = () => {
   return (
     <header className={classes.header}>
       <Link to="/" aria-label="home" className={classes.logo}>
-        PERP
+        <MessageCircle size={28} strokeWidth={3} />
+        chat
       </Link>
       <Nav />
     </header>

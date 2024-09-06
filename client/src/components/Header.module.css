@@ -8,6 +8,10 @@
 .logo {
   width: fit-content;
   font-size: 2rem;
+
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .nav {
