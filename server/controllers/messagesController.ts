@@ -8,7 +8,7 @@ export async function messagePost(
   next: NextFunction,
 ) {
   const { userId, partnerId } = req.params;
-  const { text, attachmentIds } = req.body;
+  const { text, attachmentIds = [] } = req.body;
 
   const attachments = (attachmentIds as string[]).map((attachment) => {
     return { id: Number(attachment) };

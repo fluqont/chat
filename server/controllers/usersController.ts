@@ -60,7 +60,7 @@ export async function userGet(req: Request, res: Response, next: NextFunction) {
     const decryptedSortedMessages = decryptMessages([
       ...user.messages,
       ...user.gottenMessages,
-    ]).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
     res.json({
       user: {
@@ -109,12 +109,15 @@ export async function friendGet(
   try {
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: Number(partnerId) },
-      include: { status: true, messages: true },
+      include: { status: true, gottenMessages: true, messages: true },
     });
 
-    const decryptedSortedMessages = decryptMessages(user.messages).sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-    );
+    const decryptedSortedMessages = decryptMessages([
+      ...user.messages,
+      ...user.gottenMessages,
+    ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+    console.log(decryptedSortedMessages, user.gottenMessages, user.messages);
 
     res.json({ user: { ...user, messages: decryptedSortedMessages } });
   } catch (err) {
