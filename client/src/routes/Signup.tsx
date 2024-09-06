@@ -9,8 +9,8 @@ export default function Signup() {
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (data && data.user) {
-      return navigate("/login");
+    if (data && data.message === "OK") {
+      navigate("/login");
     }
   }, [data]);
 
