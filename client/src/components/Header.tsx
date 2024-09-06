@@ -3,7 +3,7 @@ import classes from "./Header.module.css";
 import { useContext, useEffect } from "react";
 import { UserContext } from "../context/UserContext";
 import useFetch from "../hooks/useFetch";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Search } from "lucide-react";
 
 const Header = () => {
   return (
@@ -11,6 +11,14 @@ const Header = () => {
       <Link to="/" aria-label="home" className={classes.logo}>
         <MessageCircle size={28} strokeWidth={3} />
         chat
+      </Link>
+      <Link
+        to="/search"
+        className="link-button surface"
+        style={{ padding: "0.5rem 3rem" }}
+      >
+        <Search size={20} />
+        Search
       </Link>
       <Nav />
     </header>

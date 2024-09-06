@@ -79,6 +79,10 @@ a:hover {
 }
 
 /* global classes */
+.surface {
+  background-color: var(--surface);
+  color: var(--on-surface);
+}
 .primary {
   background-color: var(--primary);
   color: var(--on-primary);
@@ -88,6 +92,10 @@ a:hover {
   color: var(--on-error);
 }
 .link-button {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
   text-decoration: none;
   padding: 0.5rem 1rem;
 }
