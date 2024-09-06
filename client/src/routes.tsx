@@ -2,6 +2,7 @@ import { RouteObject } from "react-router-dom";
 import Login from "./routes/Login";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
+import User from "./routes/User";
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +16,10 @@ const routes: RouteObject[] = [
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/user",
+        element: <User />,
       },
     ],
   },

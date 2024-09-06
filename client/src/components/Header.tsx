@@ -37,7 +37,7 @@ const Nav = () => {
     <nav className={classes.nav}>
       {user ? (
         <>
-          <p>{user.username}</p>
+          <Link to="/user">{user.username}</Link>
           <button className="primary" onClick={logout}>
             log out
           </button>
