@@ -57,6 +57,7 @@ model Group {
   creatorId     Int
   members       User[]         @relation(name: "Groups")
   groupRequests GroupRequest[]
+  messages      Message[]
 }
 
 model GroupRequest {
@@ -74,9 +75,11 @@ model Message {
   senderId    Int
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  attachments Attachment[]
   recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id], onDelete: Cascade)
   recipientId Int
-  attachments Attachment[]
+  group       Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     Int
 }
 
 model Attachment {
