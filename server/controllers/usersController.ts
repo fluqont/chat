@@ -117,11 +117,11 @@ export async function userUsernamePatch(
   const { userId } = req.params;
   const { username } = req.body;
   try {
-    await prisma.user.update({
+    const user = await prisma.user.update({
       data: { username: username as string },
       where: { id: Number(userId) },
     });
-    res.json({ message: "OK" });
+    res.json({ user: user });
   } catch (err) {
     next(err);
   }
