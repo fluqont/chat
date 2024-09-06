@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import Messages from "../components/Messages";
 import useFetch from "../hooks/useFetch";
 import classes from "./MessagesWtihChats.module.css";
@@ -7,12 +7,8 @@ import Chats from "../components/Chats";
 import { useSearchParams } from "react-router-dom";
 
 export default function MessagesWithChats() {
-  // get chats
-  // display chats
-  // on click get messages
-  // display messages
-
   const [searchParams, setSearchParams] = useSearchParams();
+  const [messages, setMessages] = useState<Record<string, any>>({});
 
   const {
     data: chats,
@@ -29,9 +25,23 @@ export default function MessagesWithChats() {
     }
   }, [user]);
 
+  const {
+    data: userWithMessages,
+    fetchData: fetchMessages,
+    error: messagesError,
+    isLoading: areMessagesLoading,
+  } = useFetch();
+
   useEffect(() => {
-    console.log(searchParams);
-  }, [searchParams]);
+    const partnerId = searchParams.get("partner-id");
+    if (user && partnerId) {
+      fetchMessages(`/users/${user?.id}/messages/${partnerId}`).then((data) =>
+        setMessages(data),
+      );
+    } else {
+      setMessages([]);
+    }
+  }, [user, searchParams]);
 
   return (
     <section className={classes.section}>
@@ -44,7 +54,14 @@ export default function MessagesWithChats() {
           setSearchParams={setSearchParams}
         />
       )}
-      <Messages partner={{ id: 4, username: "sinskiy" }} messages={[]} />
+      {!userWithMessages && areMessagesLoading && <p>loading...</p>}
+      {messagesError && <p>{messagesError}</p>}
+      {messages.user && messages.user.messages.length > 0 && (
+        <Messages
+          partner={userWithMessages?.user}
+          messages={userWithMessages?.user.messages}
+        />
+      )}
     </section>
   );
 }
