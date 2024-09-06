@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
-import { StatusType, User } from "@prisma/client";
+import { StatusType } from "@prisma/client";
 import { decryptMessages } from "../helpers.js";
 
 export async function userByUsernameGet(
@@ -69,6 +69,29 @@ export async function userGet(req: Request, res: Response, next: NextFunction) {
         gottenMessages: undefined,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function chatsGet(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { userId } = req.params;
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        messages: {
+          some: {
+            OR: [{ senderId: Number(userId) }, { recipientId: Number(userId) }],
+          },
+        },
+      },
+      distinct: "username",
+    });
+    res.json({ users: users });
   } catch (err) {
     next(err);
   }

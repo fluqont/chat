@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  chatsGet,
   friendGet,
   userByUsernameGet,
   userDelete,
@@ -11,6 +12,7 @@ import { messagePost } from "../controllers/messagesController.js";
 const router = Router();
 
 router.get("/", userByUsernameGet);
+router.get("/:userId", chatsGet);
 router.patch("/:userId/status", userStatusPatch);
 router.patch("/:userId/username", userUsernamePatch);
 router.delete("/:userId", userDelete);
