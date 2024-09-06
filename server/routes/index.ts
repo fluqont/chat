@@ -9,9 +9,9 @@ const apiRouter = Router();
 
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/users", usersRouter);
-apiRouter.use("/friendRequests", friendRequestsRouter);
+apiRouter.use("/friend-requests", friendRequestsRouter);
 apiRouter.use("/messages", messagesRouter);
-apiRouter.use("/groupRequests", groupRequestsRouter);
+apiRouter.use("/group-requests", groupRequestsRouter);
 apiRouter.use("/groups", groupsRouter);
 
 export default apiRouter;

@@ -7,7 +7,7 @@ import {
 const router = Router();
 
 router.delete("/:friendRequestId", friendRequestDelete);
-router.get("/:userId/requestedUsers", friendRequestsGet);
-router.post("/:userId/requestedUsers/:requestedUserId", friendRequestPost);
+router.get("/:userId", friendRequestsGet);
+router.post("/:userId/requested-users/:requestedUserId", friendRequestPost);
 
 export default router;
