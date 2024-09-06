@@ -8,7 +8,6 @@ interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
 }
 
 const Form = ({ children, isLoading, row = false, ...props }: FormProps) => {
-  console.log(row);
   return (
     <form className={[classes.form, row && classes.row].join(" ")} {...props}>
       <section className={classes.formMain}>{children}</section>

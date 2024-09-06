@@ -12,6 +12,13 @@ export async function userByUsernameGet(
   try {
     const user = await prisma.user.findUnique({
       where: { username: username as string },
+      include: req.user && {
+        requests: {
+          where: { requestedUserId: req.user.id },
+          include: { user: true },
+        },
+        requested: { where: { userId: req.user.id }, include: { user: true } },
+      },
     });
     res.json({ user: user });
   } catch (err) {

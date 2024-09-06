@@ -24,13 +24,12 @@ export async function friendRequestPost(
 ) {
   const { userId, requestedUserId } = req.params;
   try {
-    const friendRequest = await prisma.friendRequest.create({
+    await prisma.friendRequest.create({
       data: {
         userId: Number(userId),
         requestedUserId: Number(requestedUserId),
       },
     });
-    console.log(friendRequest);
     res.json({ message: "OK" });
   } catch (err) {
     next(err);

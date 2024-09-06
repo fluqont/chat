@@ -11,6 +11,8 @@ import useFetch from "../hooks/useFetch";
 export interface User {
   id: number;
   username: string;
+  requested?: Array<{ user: User }>;
+  requests?: Array<{ user: User }>;
 }
 
 interface IUserContext {

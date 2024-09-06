@@ -3,7 +3,7 @@ import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch, { UseFetch } from "../hooks/useFetch";
 import classes from "./Search.module.css";
-import { UserContext } from "../context/UserContext";
+import { User, UserContext } from "../context/UserContext";
 
 function Search() {
   const { data, fetchData, error, isLoading } = useFetch();
@@ -13,10 +13,13 @@ function Search() {
 
     const data = new FormData(event.currentTarget);
 
-    fetchData(`/users?username=${data.get("search")}`);
+    fetchData(`/users?username=${data.get("search")}`, {
+      credentials: "include",
+    });
   }
-  // this page has a search form (input type="search") and search results
-  // search  results are displayed as cards with pfp (placeholder for now), username and status if they're friends (test this later). on click they go to messages with this person
+
+  // search  results are displayed as cards with pfp (placeholder for now), username and status if they're friends (test this later)
+  // on click they go to messages with this person
   return (
     <section className="centered-section">
       <h1>Search</h1>
@@ -49,27 +52,45 @@ function Search() {
 const SearchResults = ({ data, error, isLoading }: UseFetch) => {
   if (error) return <p>{error}</p>;
   if (isLoading) return <p>loading...</p>;
+
   return (
     <>
       {data && (
         <div className={classes.box}>
-          <SearchCard username={data.username} status={data.status?.type} />
+          <SearchCard {...(data as User)} />
         </div>
       )}
     </>
   );
 };
 
-interface SearchCardProps {
-  username: string;
-  status?: "TYPING" | "OFFLINE" | "ONLINE";
-}
-
-const SearchCard = ({ username, status }: SearchCardProps) => {
+const SearchCard = (searchedUser: User) => {
   const { user } = useContext(UserContext);
 
-  const displayedStatus =
-    (status ?? username === user?.username) ? "you" : "not your friend";
+  const displayedStatus = user?.username === searchedUser.username ? "you" : "";
+
+  const { data, fetchData } = useFetch();
+
+  const requestSent =
+    data?.message === "OK" ||
+    Boolean(searchedUser?.requested && searchedUser.requested[0]);
+
+  const respondSent = Boolean(
+    searchedUser?.requests && searchedUser.requests[0],
+  );
+
+  const friend = requestSent && respondSent;
+  // console.log(friend, respondSent, requestSent);
+  console.log(searchedUser);
+
+  function handleFriendRequestClick() {
+    fetchData(
+      `/friend-requests/${user?.id}/requested-users/${searchedUser.id}`,
+      {
+        method: "POST",
+      },
+    );
+  }
 
   return (
     <div className={classes.searchCard}>
@@ -84,12 +105,24 @@ const SearchCard = ({ username, status }: SearchCardProps) => {
         <circle cx={32} cy={32} r={32}></circle>
       </svg>
       <div className={classes.details}>
-        <p className={classes.username}>{username}</p>
-        <p className={classes.status}>{displayedStatus}</p>
+        <p className={classes.username}>{searchedUser.username}</p>
+        <p className={classes.status}>
+          {displayedStatus ||
+            (friend
+              ? "friend"
+              : requestSent
+                ? "friend request sent"
+                : respondSent
+                  ? "waiting for your response"
+                  : "")}
+        </p>
       </div>
-      {displayedStatus === "not your friend" && (
-        <button className={["primary", classes.friendRequestButton].join(" ")}>
-          send friend request
+      {!displayedStatus && !requestSent && (
+        <button
+          className={["primary", classes.friendRequestButton].join(" ")}
+          onClick={handleFriendRequestClick}
+        >
+          {respondSent ? "accept" : "send"} friend request
         </button>
       )}
     </div>
