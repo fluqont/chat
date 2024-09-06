@@ -38,7 +38,6 @@ const Nav = () => {
   useEffect(() => {
     if (data && data.message === "OK") {
       setUser(null);
-      navigate("/");
     }
   }, [data]);
   return (

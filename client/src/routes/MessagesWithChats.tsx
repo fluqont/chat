@@ -20,9 +20,7 @@ export default function MessagesWithChats() {
   const { user } = useContext(UserContext);
 
   useEffect(() => {
-    if (user) {
-      fetchChats(`/users/${user?.id}`, { credentials: "include" });
-    }
+    fetchChats(`/users/${user?.id ?? -1}`, { credentials: "include" });
   }, [user]);
 
   const {
