@@ -80,8 +80,6 @@ const SearchCard = (searchedUser: User) => {
   );
 
   const friend = requestSent && respondSent;
-  // console.log(friend, respondSent, requestSent);
-  console.log(searchedUser);
 
   function handleFriendRequestClick() {
     fetchData(
@@ -117,7 +115,7 @@ const SearchCard = (searchedUser: User) => {
                   : "")}
         </p>
       </div>
-      {!displayedStatus && !requestSent && (
+      {user && !displayedStatus && !requestSent && (
         <button
           className={["primary", classes.friendRequestButton].join(" ")}
           onClick={handleFriendRequestClick}
