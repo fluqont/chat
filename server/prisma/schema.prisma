@@ -76,10 +76,10 @@ model Message {
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   attachments Attachment[]
-  recipient   User         @relation(name: "GottenMessages", fields: [recipientId], references: [id], onDelete: Cascade)
-  recipientId Int
-  group       Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId     Int
+  recipient   User?        @relation(name: "GottenMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId Int?
+  group       Group?       @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId     Int?
 }
 
 model Attachment {

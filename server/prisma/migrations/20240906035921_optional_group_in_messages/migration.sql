@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Message" ALTER COLUMN "recipientId" DROP NOT NULL,
+ALTER COLUMN "groupId" DROP NOT NULL;
