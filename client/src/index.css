@@ -110,15 +110,16 @@ body {
   max-width: 1024px;
   margin: auto;
 }
-h1 {
+h1,
+h2 {
   margin-bottom: 1rem;
+}
+h3 {
+  margin-bottom: 0.75rem;
 }
 .centered-section {
   width: fit-content;
   margin: auto;
-}
-h3 {
-  margin-bottom: 0.75rem;
 }
 
 /* dark mode variables */

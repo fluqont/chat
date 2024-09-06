@@ -1,8 +1,14 @@
 import { useRef, useState } from "react";
 
+export interface UseFetch {
+  data: null | Record<string, any>;
+  error: null | string;
+  isLoading: boolean;
+}
+
 export default function useFetch() {
-  const [data, setData] = useState<null | Record<string, any>>(null);
-  const [error, setError] = useState<null | string>(null);
+  const [data, setData] = useState<UseFetch["data"]>(null);
+  const [error, setError] = useState<UseFetch["error"]>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const abortControllerRef = useRef<null | AbortController>(null);

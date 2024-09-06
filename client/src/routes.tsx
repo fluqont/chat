@@ -3,6 +3,7 @@ import Login from "./routes/Login";
 import Root from "./routes/Root";
 import Signup from "./routes/Signup";
 import User from "./routes/User";
+import Search from "./routes/Search";
 
 const routes: RouteObject[] = [
   {
@@ -20,6 +21,10 @@ const routes: RouteObject[] = [
       {
         path: "/user",
         element: <User />,
+      },
+      {
+        path: "/search",
+        element: <Search />,
       },
     ],
   },

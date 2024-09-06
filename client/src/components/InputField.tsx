@@ -8,19 +8,20 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 
 const InputField = ({
   label,
+  id = label,
   textarea = false,
   ...inputProps
 }: InputFieldProps) => {
   return (
     <div className={classes.inputField}>
-      <label htmlFor={label} className={classes.label}>
+      <label htmlFor={id} className={classes.label}>
         {label}
       </label>
       <Input
         textarea={textarea}
         {...inputProps}
-        name={label}
-        id={label}
+        name={id}
+        id={id}
         className={classes.input}
       />
     </div>
