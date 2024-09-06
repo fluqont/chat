@@ -88,6 +88,9 @@ export async function chatsGet(
             OR: [{ senderId: Number(userId) }, { recipientId: Number(userId) }],
           },
         },
+        id: {
+          not: Number(userId),
+        },
       },
       distinct: "username",
     });
