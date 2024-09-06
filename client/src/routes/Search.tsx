@@ -1,9 +1,9 @@
-import { FormEvent, useEffect } from "react";
+import { FormEvent, useContext } from "react";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch, { UseFetch } from "../hooks/useFetch";
 import classes from "./Search.module.css";
-import { RectangleVertical } from "lucide-react";
+import { UserContext } from "../context/UserContext";
 
 function Search() {
   const { data, fetchData, error, isLoading } = useFetch();
@@ -66,6 +66,7 @@ interface SearchCardProps {
 }
 
 const SearchCard = ({ username, status }: SearchCardProps) => {
+  const { user } = useContext(UserContext);
   return (
     <div className={classes.searchCard}>
       <svg
@@ -80,7 +81,9 @@ const SearchCard = ({ username, status }: SearchCardProps) => {
       </svg>
       <div className={classes.details}>
         <p className={classes.username}>{username}</p>
-        <p className={classes.status}>{status ?? "not your friend"}</p>
+        <p className={classes.status}>
+          {(status ?? username === user?.username) ? "you" : "not your friend"}
+        </p>
       </div>
     </div>
   );
