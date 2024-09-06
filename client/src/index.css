@@ -63,6 +63,7 @@ a:disabled {
 button,
 .link-button {
   width: fit-content;
+  height: fit-content;
   padding: 0.5rem 2rem;
 
   border-radius: var(--rounded);

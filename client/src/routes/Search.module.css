@@ -11,6 +11,7 @@
 
 .search-card {
   display: flex;
+  align-items: center;
   gap: 1rem;
 }
 
@@ -18,10 +19,6 @@
   width: 4rem;
   height: 4rem;
   border-radius: var(--rounded);
-}
-
-.details {
-  gap: 1rem;
 }
 
 .username {
@@ -32,4 +29,8 @@
 .status {
   font-weight: 500;
   color: var(--text-variation);
+}
+
+.friend-request-button {
+  margin-left: auto;
 }

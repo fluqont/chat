@@ -19,7 +19,7 @@ function Search() {
   // search  results are displayed as cards with pfp (placeholder for now), username and status if they're friends (test this later). on click they go to messages with this person
   return (
     <section className="centered-section">
-      <h1>search</h1>
+      <h1>Search</h1>
       <search className={classes.search}>
         <Form isLoading={isLoading} row={true} onSubmit={handleSubmit}>
           {error && <p aria-live="polite">{error}</p>}
@@ -30,7 +30,7 @@ function Search() {
           />
         </Form>
         <section>
-          <h2>results</h2>
+          <h3>Results</h3>
           {data && data.user ? (
             <SearchResults
               data={data.user}
@@ -67,6 +67,10 @@ interface SearchCardProps {
 
 const SearchCard = ({ username, status }: SearchCardProps) => {
   const { user } = useContext(UserContext);
+
+  const displayedStatus =
+    (status ?? username === user?.username) ? "you" : "not your friend";
+
   return (
     <div className={classes.searchCard}>
       <svg
@@ -81,10 +85,13 @@ const SearchCard = ({ username, status }: SearchCardProps) => {
       </svg>
       <div className={classes.details}>
         <p className={classes.username}>{username}</p>
-        <p className={classes.status}>
-          {(status ?? username === user?.username) ? "you" : "not your friend"}
-        </p>
+        <p className={classes.status}>{displayedStatus}</p>
       </div>
+      {displayedStatus === "not your friend" && (
+        <button className={["primary", classes.friendRequestButton].join(" ")}>
+          send friend request
+        </button>
+      )}
     </div>
   );
 };
