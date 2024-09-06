@@ -10,6 +10,8 @@
   --on-primary: #ffffff;
   --error: #ba1a1a;
   --on-error: #ffffff;
+  --primary-container: #cdeda3;
+  --on-primary-container: #102000;
 
   --rounded: 9999px;
   --rounded-card: 1rem;
@@ -136,5 +138,7 @@ h3 {
     --on-primary: #283500;
     --error: #ffb4ab;
     --on-error: #690005;
+    --primary-container: #354e16;
+    --on-primary-container: #cdeda3;
   }
 }

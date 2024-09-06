@@ -4,19 +4,23 @@ import { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   textarea?: boolean;
+  displayLabel?: boolean;
 }
 
 const InputField = ({
   label,
   id = label,
   textarea = false,
+  displayLabel = true,
   ...inputProps
 }: InputFieldProps) => {
   return (
     <div className={classes.inputField}>
-      <label htmlFor={id} className={classes.label}>
-        {label}
-      </label>
+      {displayLabel && (
+        <label htmlFor={id} className={classes.label}>
+          {label}
+        </label>
+      )}
       <Input
         textarea={textarea}
         {...inputProps}
