@@ -21,7 +21,7 @@ export default function MessagesWithChats() {
 
   useEffect(() => {
     fetchChats(`/users/${user?.id ?? -1}`, { credentials: "include" });
-  }, [user]);
+  }, [user, messages]);
 
   const {
     data: userWithMessages,
@@ -57,7 +57,7 @@ export default function MessagesWithChats() {
       )}
       {!userWithMessages && areMessagesLoading && <p>loading...</p>}
       {messagesError && <p>{messagesError}</p>}
-      {messages.user && messages.user.messages.length > 0 && (
+      {messages && messages.user && (
         <Messages
           partner={userWithMessages?.user}
           messages={userWithMessages?.user.messages}

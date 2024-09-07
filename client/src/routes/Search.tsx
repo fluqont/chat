@@ -4,6 +4,7 @@ import InputField from "../components/InputField";
 import useFetch, { UseFetch } from "../hooks/useFetch";
 import classes from "./Search.module.css";
 import { User, UserContext } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 function Search() {
   const { data, fetchData, error, isLoading } = useFetch();
@@ -123,6 +124,7 @@ const SearchCard = (searchedUser: User) => {
           {respondSent ? "accept" : "send"} friend request
         </button>
       )}
+      <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
     </div>
   );
 };

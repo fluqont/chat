@@ -54,7 +54,14 @@ export async function userGet(req: Request, res: Response, next: NextFunction) {
 
     const user = await prisma.user.findUniqueOrThrow({
       where: { id: Number(partnerId) },
-      include: { messages: true, gottenMessages: true },
+      include: {
+        messages: {
+          where: { senderId: Number(partnerId), recipientId: Number(userId) },
+        },
+        gottenMessages: {
+          where: { senderId: Number(userId), recipientId: Number(partnerId) },
+        },
+      },
     });
 
     const decryptedSortedMessages = decryptMessages([
@@ -81,12 +88,10 @@ export async function chatsGet(
 ) {
   const { userId } = req.params;
   try {
-    const users = await prisma.user.findMany({
+    const gotters = await prisma.user.findMany({
       where: {
         messages: {
-          some: {
-            OR: [{ senderId: Number(userId) }, { recipientId: Number(userId) }],
-          },
+          some: { recipientId: Number(userId) },
         },
         id: {
           not: Number(userId),
@@ -94,7 +99,28 @@ export async function chatsGet(
       },
       distinct: "username",
     });
-    res.json({ users: users });
+
+    const senders = await prisma.user.findMany({
+      where: {
+        gottenMessages: {
+          some: { senderId: Number(userId) },
+        },
+        id: {
+          not: Number(userId),
+        },
+      },
+      distinct: "username",
+    });
+
+    // deduplicate users
+    const userIds: Record<number, boolean> = {};
+    res.json({
+      users: [...gotters, ...senders].filter((user) => {
+        const seenBefore = userIds[user.id];
+        userIds[user.id] = true;
+        return !seenBefore;
+      }),
+    });
   } catch (err) {
     next(err);
   }
