@@ -62,7 +62,7 @@ export async function messageDelete(
 ) {
   const { messageId } = req.params;
   try {
-    await prisma.user.delete({ where: { id: Number(messageId) } });
+    await prisma.message.delete({ where: { id: Number(messageId) } });
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
