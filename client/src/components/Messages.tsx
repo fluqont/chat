@@ -12,12 +12,14 @@ import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
 import { Edit, Trash } from "lucide-react";
+import { getDate } from "../date";
 
 interface Message {
   id: number;
   senderId: number;
   text: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 interface MessagesProps {
@@ -88,20 +90,8 @@ const Message = ({ message, partnerId, setEdit }: MessageProps) => {
 
   const partnerMessage = message.senderId === partnerId;
 
-  const originalMessageDate = new Date(message.createdAt);
-  const isToday =
-    originalMessageDate.toDateString() === new Date().toDateString();
-
-  const messageDate = isToday
-    ? ""
-    : originalMessageDate.toLocaleString([], { dateStyle: "medium" }) + ", ";
-
-  const messageTime = originalMessageDate.toLocaleString([], {
-    timeStyle: "short",
-    hour12: false,
-  });
-
-  const fullMessageDate = `${messageDate}${messageTime}`;
+  const createdAt = getDate(message.createdAt);
+  const updatedAt = getDate(message.updatedAt);
 
   const { data, fetchData, error } = useFetch();
   function handleDeleteClick() {
@@ -150,8 +140,13 @@ const Message = ({ message, partnerId, setEdit }: MessageProps) => {
         )}
       </div>
       <p className={classes.time}>
-        <time dateTime={message.createdAt}>{fullMessageDate}</time>
+        <time dateTime={message.createdAt}>{createdAt}</time>
       </p>
+      {updatedAt !== createdAt && (
+        <p className={classes.time}>
+          <time dateTime={message.updatedAt}>{updatedAt}</time>
+        </p>
+      )}
     </article>
   );
 };
