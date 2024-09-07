@@ -35,5 +35,8 @@ export async function getMessages({
     take: Number(limit) || undefined,
     skip: Number(offset) || 0,
   });
-  return messages;
+  const decryptedMessages = messages.map((message) => {
+    return { ...message, text: decrypt(message.text) };
+  });
+  return decryptedMessages;
 }
