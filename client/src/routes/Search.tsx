@@ -25,8 +25,6 @@ function Search() {
     fetchUser();
   }
 
-  // search  results are displayed as cards with pfp (placeholder for now), username and status if they're friends (test this later)
-  // on click they go to messages with this person
   return (
     <section className="centered-section">
       <h1>Search</h1>
