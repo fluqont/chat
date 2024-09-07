@@ -1,4 +1,11 @@
-import { FormEvent, useContext, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { User, UserContext } from "../context/UserContext";
 import Form from "./Form";
 import InputField from "./InputField";
@@ -24,17 +31,21 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
 
   const { user } = useContext(UserContext);
 
+  const [edit, setEdit] = useState<false | number>(false);
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
 
-    fetchData(`/users/${user?.id}/messages/${partner.id}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=UTF-8" },
-      credentials: "include",
-      body: JSON.stringify({ text: data.get("message"), attachmentIds: [] }),
-    }).then(() => fetchMessages(String(partner.id)));
+    fetchData(
+      edit ? `/messages/${edit}` : `/users/${user?.id}/messages/${partner.id}`,
+      {
+        method: edit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json; charset=UTF-8" },
+        credentials: "include",
+        body: JSON.stringify({ text: data.get("message"), attachmentIds: [] }),
+      },
+    ).then(() => fetchMessages(String(partner.id)));
   }
 
   return (
@@ -42,14 +53,25 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
       <h2>{partner.username}</h2>
       {messages.length > 0 ? (
         messages.map((message) => (
-          <Message message={message} partnerId={partner.id} key={message.id} />
+          <Message
+            message={message}
+            partnerId={partner.id}
+            setEdit={setEdit}
+            key={message.id}
+          />
         ))
       ) : (
         <p>no messages yet</p>
       )}
       <Form isLoading={isLoading} row={true} onSubmit={handleSubmit}>
         {error && <p aria-live="polite">{error}</p>}
-        <InputField label="message" displayLabel={false} />
+        <InputField
+          label="message"
+          displayLabel={false}
+          defaultValue={
+            edit ? messages.find((message) => message.id === edit)?.text : ""
+          }
+        />
       </Form>
     </section>
   );
@@ -58,9 +80,10 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
 interface MessageProps {
   partnerId: number;
   message: Message;
+  setEdit: Dispatch<SetStateAction<false | number>>;
 }
 
-const Message = ({ message, partnerId }: MessageProps) => {
+const Message = ({ message, partnerId, setEdit }: MessageProps) => {
   const [deleted, setDeleted] = useState(false);
 
   const partnerMessage = message.senderId === partnerId;
@@ -116,7 +139,11 @@ const Message = ({ message, partnerId }: MessageProps) => {
             >
               <Trash size={20} />
             </button>
-            <button className="icon-button" aria-label="edit message">
+            <button
+              className="icon-button"
+              aria-label="edit message"
+              onClick={() => setEdit(message.id)}
+            >
               <Edit size={20} />
             </button>
           </nav>

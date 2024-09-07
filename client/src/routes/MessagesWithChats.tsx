@@ -59,6 +59,7 @@ export default function MessagesWithChats() {
       {messagesError && <p>{messagesError}</p>}
       {messages && messages.user && (
         <Messages
+          key={searchParams.get("partner-id")}
           partner={userWithMessages?.user}
           messages={userWithMessages?.user.messages}
           fetchMessages={messagesFetch}
