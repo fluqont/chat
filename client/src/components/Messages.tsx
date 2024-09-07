@@ -1,4 +1,4 @@
-import { FormEvent, useContext } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { User, UserContext } from "../context/UserContext";
 import Form from "./Form";
 import InputField from "./InputField";
@@ -61,6 +61,8 @@ interface MessageProps {
 }
 
 const Message = ({ message, partnerId }: MessageProps) => {
+  const [deleted, setDeleted] = useState(false);
+
   const partnerMessage = message.senderId === partnerId;
 
   const originalMessageDate = new Date(message.createdAt);
@@ -77,6 +79,23 @@ const Message = ({ message, partnerId }: MessageProps) => {
   });
 
   const fullMessageDate = `${messageDate}${messageTime}`;
+
+  const { data, fetchData, error } = useFetch();
+  function handleDeleteClick() {
+    fetchData(`/messages/${message.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  }
+
+  useEffect(() => {
+    if (data && data.message === "OK") {
+      setDeleted(true);
+    }
+  }, [data]);
+
+  if (deleted) return;
+
   return (
     <article
       key={message.id}
@@ -85,11 +104,16 @@ const Message = ({ message, partnerId }: MessageProps) => {
         classes[message.senderId === partnerId ? "partner" : "user"],
       ].join(" ")}
     >
+      {error && <p>{error}</p>}
       <div className={classes.header}>
         <p className={classes.text}>{message.text}</p>
         {!partnerMessage && (
           <nav className={classes.nav}>
-            <button className="icon-button" aria-label="delete message">
+            <button
+              className="icon-button"
+              aria-label="delete message"
+              onClick={handleDeleteClick}
+            >
               <Trash size={20} />
             </button>
             <button className="icon-button" aria-label="edit message">
