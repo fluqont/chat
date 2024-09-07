@@ -167,17 +167,21 @@ const Requests = ({ requests, fetchRequests, children }: RequestsProps) => {
   return (
     <article>
       <h3>{children}</h3>
-      <ul role="list" className={classes.requests}>
-        {requests.map((request) => (
-          <li key={request.user.id}>
-            <Request
-              requestId={request.id}
-              username={request.user.username}
-              handleDelete={handleDelete}
-            />
-          </li>
-        ))}
-      </ul>
+      {requests.length > 0 ? (
+        <ul role="list" className={classes.requests}>
+          {requests.map((request) => (
+            <li key={request.user.id}>
+              <Request
+                requestId={request.id}
+                username={request.user.username}
+                handleDelete={handleDelete}
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>empty</p>
+      )}
     </article>
   );
 };
