@@ -11,7 +11,7 @@ import Form from "./Form";
 import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
-import { Edit, Trash } from "lucide-react";
+import { Edit, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
 
 interface Message {
@@ -84,6 +84,12 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         row={true}
         onSubmit={handleSubmit}
         style={{ marginTop: "2rem" }}
+        submitLabel={<Send size={20} />}
+        submitStyle={{
+          padding: "0",
+          height: "3rem",
+          width: "3rem",
+        }}
       >
         {error && <p aria-live="polite">{error}</p>}
         <InputField

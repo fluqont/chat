@@ -23,6 +23,16 @@ export async function isUserById(
   next();
 }
 
+export async function isSender(req: Request, _: Response, next: NextFunction) {
+  const userId = Number(req.body.senderId);
+
+  if (userId !== req.user?.id) {
+    return next(new ErrorWithStatus("Unauthorized", 401));
+  }
+
+  next();
+}
+
 export async function isMessageOwner(
   req: Request,
   _: Response,

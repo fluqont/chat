@@ -1,5 +1,5 @@
 .section {
   display: grid;
   grid-template-columns: 2fr 7fr;
-  gap: 3rem;
+  gap: 1rem;
 }

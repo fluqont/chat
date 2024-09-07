@@ -9,16 +9,15 @@ const Header = () => {
   return (
     <header className={classes.header}>
       <Link to="/" aria-label="home" className={classes.logo}>
-        <MessageCircle size={28} strokeWidth={3} />
+        <MessageCircle size={24} strokeWidth={3} />
         chat
       </Link>
       <Link
         to="/search"
-        className="link-button surface"
-        style={{ padding: "0.5rem 3rem" }}
+        className={["link-button surface", classes.search].join(" ")}
       >
         <Search size={20} />
-        Search
+        <span>Search</span>
       </Link>
       <Nav />
     </header>
