@@ -19,7 +19,6 @@ export default function MessagesWithChats() {
   const { user } = useContext(UserContext);
 
   const [messages, setMessages] = useState<Record<string, any>>({});
-  console.log(typeof messages, messages);
 
   useEffect(() => {
     fetchChats(`/users/${user?.id ?? -1}`, { credentials: "include" });
@@ -78,6 +77,7 @@ export default function MessagesWithChats() {
           fetchMessages={messagesFetch}
         />
       )}
+      {!partnerId && <p className="error-like-section">Select chat</p>}
     </section>
   );
 }
