@@ -149,7 +149,7 @@ const Message = ({ message, partnerId, setEdit }: MessageProps) => {
       </p>
       {updatedAt !== createdAt && (
         <p className={classes.time}>
-          <time dateTime={message.updatedAt}>{updatedAt}</time>
+          edited at <time dateTime={message.updatedAt}>{updatedAt}</time>
         </p>
       )}
     </article>
