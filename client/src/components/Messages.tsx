@@ -50,6 +50,8 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         recipientId: partner.id,
       }),
     }).then(() => fetchMessages(String(partner.id)));
+
+    setEdit(false);
   }
 
   return (
@@ -75,6 +77,7 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
       >
         {error && <p aria-live="polite">{error}</p>}
         <InputField
+          key={messages.length}
           label="message"
           displayLabel={false}
           defaultValue={
