@@ -1,0 +1,13 @@
+.section {
+  display: grid;
+  gap: 2rem;
+}
+
+.requests {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.request {
+  composes: box from "./Search.module.css";
+}

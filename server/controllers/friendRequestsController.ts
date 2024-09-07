@@ -10,8 +10,18 @@ export async function friendRequestsGet(
   try {
     const friendRequests = await prisma.friendRequest.findMany({
       where: {
-        userId: Number(userId),
-        requestedUserId: Number(requestedUserId),
+        OR: [
+          { userId: userId ? Number(userId) : undefined },
+          {
+            requestedUserId: requestedUserId
+              ? Number(requestedUserId)
+              : undefined,
+          },
+        ],
+      },
+      include: {
+        user: { select: { username: true } },
+        requestedUser: { select: { username: true } },
       },
     });
     res.json({ friendRequests: friendRequests });
