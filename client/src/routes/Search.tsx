@@ -122,7 +122,7 @@ const SearchCard = (searchedUser: User) => {
             {respondSent ? "accept" : "send"} friend request
           </button>
         )}
-        {displayedStatus !== "you" && (
+        {user && displayedStatus !== "you" && (
           <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
         )}
       </div>
