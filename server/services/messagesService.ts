@@ -15,7 +15,6 @@ export async function getMessages({
   groupId,
   limit,
   offset,
-  partner,
 }: Query) {
   const messages = await prisma.message.findMany({
     where: {

@@ -56,7 +56,17 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
 
   return (
     <section className={classes.messages}>
-      <h2>{partner.username}</h2>
+      <h2>
+        <span>{partner.username}</span>
+        <small
+          className={[
+            classes.status,
+            partner.status && classes[partner.status.type.toLowerCase()],
+          ].join(" ")}
+        >
+          {partner.status && partner.status.type}
+        </small>
+      </h2>
       {messages.length > 0 ? (
         messages.map((message) => (
           <Message

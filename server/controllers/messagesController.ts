@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 import { encrypt, getMessages, Query } from "../services/messagesService.js";
+import { getFriendshipStatus } from "./usersController.js";
 
 export async function messagesGet(
   req: Request,
@@ -9,10 +10,16 @@ export async function messagesGet(
 ) {
   try {
     const messages = await getMessages(req.query as Query);
+    const isFriend =
+      (await getFriendshipStatus(
+        Number(req.query.userId),
+        Number(req.query.partnerId),
+      )) === "friend";
     const partner =
       req.query.partner === "true" &&
       (await prisma.user.findUnique({
         where: { id: Number(req.query.partnerId) },
+        include: { status: isFriend },
       }));
     res.json({ messages: messages, partner: partner });
   } catch (err) {

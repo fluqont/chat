@@ -22,7 +22,7 @@ export async function userByUsernameGet(
     next(err);
   }
 }
-async function getFriendshipStatus(
+export async function getFriendshipStatus(
   currentUserId: number,
   searchedUserId: number,
 ): Promise<"friend" | "waits for your answer" | "request sent" | null> {
