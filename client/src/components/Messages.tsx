@@ -65,7 +65,12 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
       ) : (
         <p>no messages yet</p>
       )}
-      <Form isLoading={isLoading} row={true} onSubmit={handleSubmit}>
+      <Form
+        isLoading={isLoading}
+        row={true}
+        onSubmit={handleSubmit}
+        style={{ marginTop: "2rem" }}
+      >
         {error && <p aria-live="polite">{error}</p>}
         <InputField
           label="message"

@@ -23,6 +23,7 @@
 .nav {
   display: flex;
   gap: 0.5rem;
+  margin-left: 2rem;
 }
 
 .text {
