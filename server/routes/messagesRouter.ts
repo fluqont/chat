@@ -5,11 +5,12 @@ import {
   messagePut,
   messagesGet,
 } from "../controllers/messagesController.js";
+import { isMessageOwner, isUserById } from "../middlewares/isUser.js";
 const router = Router();
 
-router.get("/", messagesGet);
-router.post("/", messagePost);
-router.put("/:messageId", messagePut);
-router.delete("/:messageId", messageDelete);
+router.get("/", isUserById, messagesGet);
+router.post("/", isUserById, messagePost);
+router.put("/:messageId", isMessageOwner, messagePut);
+router.delete("/:messageId", isMessageOwner, messageDelete);
 
 export default router;

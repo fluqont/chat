@@ -4,10 +4,15 @@ import {
   groupRequestPost,
   groupRequestsGet,
 } from "../controllers/groupRequestsController.js";
+import {
+  isGroupCreator,
+  isGroupRequestOwner,
+  isUserById,
+} from "../middlewares/isUser.js";
 const router = Router();
 
-router.get("/", groupRequestsGet);
-router.post("/", groupRequestPost);
-router.delete("/:groupRequestId", groupRequestDelete);
+router.get("/", isUserById, groupRequestsGet);
+router.post("/:groupId", isGroupCreator, groupRequestPost);
+router.delete("/:groupRequestId", isGroupRequestOwner, groupRequestDelete);
 
 export default router;
