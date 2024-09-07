@@ -6,6 +6,7 @@
 .message {
   composes: box from "../routes/Search.module.css";
   width: fit-content;
+  text-wrap: balance;
 }
 
 .user {
