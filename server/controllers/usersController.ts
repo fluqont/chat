@@ -132,7 +132,7 @@ export async function chatsGet(
     const messages = await getMessages({ userId: userId });
     const userIds = messages
       .flatMap((message) => [message.senderId, message.recipientId])
-      .filter((id) => id) as number[];
+      .filter((id) => id && id !== Number(userId)) as number[];
     const uniqueUserIds = [...new Set(userIds)];
     const users = await prisma.user.findMany({
       where: { id: { in: uniqueUserIds } },
