@@ -61,9 +61,14 @@ function User() {
   );
 }
 
+interface Request {
+  user: IUser;
+  id: number;
+}
+
 interface Requests {
-  incoming: IUser[];
-  outcoming: IUser[];
+  incoming: Request[];
+  outcoming: Request[];
 }
 
 const FriendRequests = () => {
@@ -71,69 +76,127 @@ const FriendRequests = () => {
 
   const { user } = useContext(UserContext);
 
-  const [requests, setRequests] = useState<Requests>({
+  const initRequests = {
     incoming: [],
     outcoming: [],
-  });
+  };
+  const [requests, setRequests] = useState<Requests>(initRequests);
 
-  useEffect(() => {
+  function fetchRequests() {
     if (user) {
       fetchData(
         `/friend-requests?userId=${user.id}&requestedUserId=${user.id}`,
       );
     }
+  }
+
+  useEffect(() => {
+    fetchRequests();
   }, [user]);
 
   useEffect(() => {
     if (data && user) {
+      console.log("settin", data.friendRequests);
+      setRequests(initRequests);
       data.friendRequests.map((request: any) => {
         setRequests((requests) => {
           const outcoming = request.userId === user.id;
           return {
             outcoming: outcoming
-              ? [...requests.outcoming, request.requestedUser]
+              ? [
+                  ...requests.outcoming,
+                  {
+                    ...request,
+                    user: request.requestedUser,
+                    requestedUser: undefined,
+                  },
+                ]
               : requests.outcoming,
             incoming: outcoming
               ? requests.incoming
-              : [...requests.incoming, request.user],
+              : [
+                  ...requests.incoming,
+                  { ...request, user: request.user, requestedUser: undefined },
+                ],
           };
         });
       });
     }
   }, [data]);
 
+  if (isLoading) return <p>loading...</p>;
+
   return (
-    <section>
+    <section style={{ marginTop: "2rem" }}>
       <h2>Friend requests</h2>
       {error && <p>{error}</p>}
       <div className={classes.section}>
-        <article>
-          <h3>Incoming</h3>
-          <Requests requests={requests.incoming} />
-        </article>
-        <article>
-          <h3>Outcoming</h3>
-          <Requests requests={requests.outcoming} />
-        </article>
+        <Requests fetchRequests={fetchRequests} requests={requests.incoming}>
+          Incoming
+        </Requests>
+        <Requests fetchRequests={fetchRequests} requests={requests.outcoming}>
+          Outcoming
+        </Requests>
       </div>
     </section>
   );
 };
 
-const Requests = ({ requests }: { requests: IUser[] }) => {
+interface RequestsProps {
+  requests: Request[];
+  fetchRequests: () => void;
+  children: string;
+}
+
+const Requests = ({ requests, fetchRequests, children }: RequestsProps) => {
+  const { data, fetchData } = useFetch();
+
+  function handleDelete(id: number) {
+    fetchData(`/friend-requests/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  }
+
+  useEffect(() => {
+    if (data && data.message === "OK") {
+      fetchRequests();
+    }
+  }, [data]);
+
   return (
-    <ul role="list" className={classes.requests}>
-      {requests.map((request) => (
-        <li key={request.username}>
-          <Request username={request.username} />
-        </li>
-      ))}
-    </ul>
+    <article>
+      <h3>{children}</h3>
+      <ul role="list" className={classes.requests}>
+        {requests.map((request) => (
+          <li key={request.user.id}>
+            <Request
+              requestId={request.id}
+              username={request.user.username}
+              handleDelete={handleDelete}
+            />
+          </li>
+        ))}
+      </ul>
+    </article>
   );
 };
 
-const Request = ({ username }: { username: string }) => {
-  return <div className={classes.request}>{username}</div>;
+interface RequestProps {
+  handleDelete: (id: number) => void;
+  requestId: number;
+  username: string;
+}
+
+const Request = ({ username, requestId, handleDelete }: RequestProps) => {
+  return (
+    <div className={classes.request}>
+      <p>{username}</p>
+      <button onClick={() => handleDelete(requestId)} className="primary">
+        delete
+      </button>
+    </div>
+  );
 };
 
 export default User;

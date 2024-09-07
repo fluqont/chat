@@ -20,8 +20,8 @@ export async function friendRequestsGet(
         ],
       },
       include: {
-        user: { select: { username: true } },
-        requestedUser: { select: { username: true } },
+        user: true,
+        requestedUser: true,
       },
     });
     res.json({ friendRequests: friendRequests });

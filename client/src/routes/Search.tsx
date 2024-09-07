@@ -100,7 +100,9 @@ const SearchCard = ({
   const { data, fetchData, error } = useFetch();
 
   useEffect(() => {
-    fetchUser();
+    if (data && data.message === "OK") {
+      fetchUser();
+    }
   }, [data]);
 
   const requestSent =
