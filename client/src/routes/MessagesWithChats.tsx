@@ -21,7 +21,9 @@ export default function MessagesWithChats() {
   const [messages, setMessages] = useState<Record<string, any>>({});
 
   useEffect(() => {
-    fetchChats(`/users/${user?.id ?? -1}`, { credentials: "include" });
+    if (user) {
+      fetchChats(`/users/${user.id}`, { credentials: "include" });
+    }
   }, [user, messages]);
 
   const {
