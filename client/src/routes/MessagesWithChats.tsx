@@ -47,10 +47,18 @@ export default function MessagesWithChats() {
     }
   }, [user, searchParams]);
 
+  if (!user) {
+    return (
+      <p className="error-like-section">You must log in to chat with people</p>
+    );
+  }
+
   return (
     <section className={classes.section}>
-      {!chats && isChatsLoading && <p>loading...</p>}
-      {chatsError && <p>{chatsError}</p>}
+      {!chats && isChatsLoading && (
+        <p className="error-like-section">loading...</p>
+      )}
+      {chatsError && <p className="error-like-section">{chatsError}</p>}
       {chats && (
         <Chats
           users={chats.users}
@@ -58,8 +66,10 @@ export default function MessagesWithChats() {
           setSearchParams={setSearchParams}
         />
       )}
-      {!messagesWithPartner && areMessagesLoading && <p>loading...</p>}
-      {messagesError && <p>{messagesError}</p>}
+      {!messagesWithPartner && areMessagesLoading && (
+        <p className="error-like-section">loading...</p>
+      )}
+      {messagesError && <p className="error-like-section">{messagesError}</p>}
       {messages && messages.partner && (
         <Messages
           key={partnerId}

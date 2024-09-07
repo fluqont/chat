@@ -122,7 +122,7 @@ const Message = ({ message, partnerId, setEdit }: MessageProps) => {
         classes[message.senderId === partnerId ? "partner" : "user"],
       ].join(" ")}
     >
-      {error && <p>{error}</p>}
+      {error && <p aria-live="polite">{error}</p>}
       <div className={classes.header}>
         <p className={classes.text}>{message.text}</p>
         {!partnerMessage && (
