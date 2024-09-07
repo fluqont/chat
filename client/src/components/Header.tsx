@@ -15,6 +15,7 @@ const Header = () => {
       <Link
         to="/search"
         className={["link-button surface", classes.search].join(" ")}
+        aria-label="search"
       >
         <Search size={20} />
         <span>Search</span>

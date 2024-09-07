@@ -84,11 +84,14 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         row={true}
         onSubmit={handleSubmit}
         style={{ marginTop: "2rem" }}
-        submitLabel={<Send size={20} />}
-        submitStyle={{
-          padding: "0",
-          height: "3rem",
-          width: "3rem",
+        submitProps={{
+          children: <Send size={20} />,
+          style: {
+            padding: "0",
+            height: "3rem",
+            width: "3rem",
+          },
+          "aria-label": "send",
         }}
       >
         {error && <p aria-live="polite">{error}</p>}

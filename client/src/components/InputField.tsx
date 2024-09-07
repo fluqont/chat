@@ -16,11 +16,13 @@ const InputField = ({
 }: InputFieldProps) => {
   return (
     <div className={classes.inputField}>
-      {displayLabel && (
-        <label htmlFor={id} className={classes.label}>
-          {label}
-        </label>
-      )}
+      <label
+        htmlFor={id}
+        className={classes.label}
+        style={{ visibility: displayLabel ? "hidden" : "visible" }}
+      >
+        {label}
+      </label>
       <Input
         textarea={textarea}
         {...inputProps}

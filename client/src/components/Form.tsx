@@ -1,5 +1,6 @@
 import classes from "./Form.module.css";
 import {
+  ButtonHTMLAttributes,
   CSSProperties,
   FormHTMLAttributes,
   forwardRef,
@@ -10,22 +11,11 @@ interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   children: ReactNode;
   isLoading: boolean;
   row?: boolean;
-  submitLabel?: ReactNode;
-  submitStyle?: CSSProperties;
+  submitProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
 const Form = forwardRef<HTMLFormElement, FormProps>(
-  (
-    {
-      children,
-      isLoading,
-      row = false,
-      submitLabel = "submit",
-      submitStyle,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ children, isLoading, row = false, submitProps, ...props }, ref) => {
     return (
       <form
         ref={ref}
@@ -33,12 +23,7 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
         {...props}
       >
         <section className={classes.formMain}>{children}</section>
-        <FormNav
-          isLoading={isLoading}
-          row={row}
-          submitLabel={submitLabel}
-          submitStyle={submitStyle}
-        />
+        <FormNav isLoading={isLoading} row={row} submitProps={submitProps} />
       </form>
     );
   },
@@ -47,25 +32,19 @@ const Form = forwardRef<HTMLFormElement, FormProps>(
 interface FormNavProps {
   isLoading: boolean;
   row: boolean;
-  submitLabel: ReactNode;
-  submitStyle?: CSSProperties;
+  submitProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
-const FormNav = ({
-  isLoading,
-  row,
-  submitLabel,
-  submitStyle,
-}: FormNavProps) => {
+const FormNav = ({ isLoading, row, submitProps }: FormNavProps) => {
   return (
     <section className={classes.formNav}>
       <button
         type="submit"
         className="primary"
         disabled={isLoading}
-        style={submitStyle}
+        {...submitProps}
       >
-        {submitLabel}
+        {submitProps?.children ?? "submit"}
       </button>
       {!row && (
         <button type="reset" className="error" disabled={isLoading}>
