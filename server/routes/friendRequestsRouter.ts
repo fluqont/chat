@@ -6,8 +6,8 @@ import {
 } from "../controllers/friendRequestsController.js";
 const router = Router();
 
+router.get("/", friendRequestsGet);
+router.post("/", friendRequestPost);
 router.delete("/:friendRequestId", friendRequestDelete);
-router.get("/:userId", friendRequestsGet);
-router.post("/:userId/requested-users/:requestedUserId", friendRequestPost);
 
 export default router;

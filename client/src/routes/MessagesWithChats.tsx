@@ -8,7 +8,6 @@ import { useSearchParams } from "react-router-dom";
 
 export default function MessagesWithChats() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [messages, setMessages] = useState<Record<string, any>>({});
 
   const {
     data: chats,
@@ -19,28 +18,32 @@ export default function MessagesWithChats() {
 
   const { user } = useContext(UserContext);
 
+  const [messages, setMessages] = useState<Record<string, any>>({});
+  console.log(typeof messages, messages);
+
   useEffect(() => {
     fetchChats(`/users/${user?.id ?? -1}`, { credentials: "include" });
   }, [user, messages]);
 
   const {
-    data: userWithMessages,
+    data: messagesWithPartner,
     fetchData: fetchMessages,
     error: messagesError,
     isLoading: areMessagesLoading,
   } = useFetch();
 
   function messagesFetch(partnerId: string) {
-    fetchMessages(`/users/${user?.id}/messages/${partnerId}`).then((data) =>
-      setMessages(data),
-    );
+    fetchMessages(
+      `/messages?userId=${user?.id}&partnerId=${partnerId}&partner=true`,
+    ).then((data) => setMessages(data));
   }
+
+  const partnerId = searchParams.get("partner-id");
   useEffect(() => {
-    const partnerId = searchParams.get("partner-id");
     if (user && partnerId) {
       messagesFetch(partnerId);
     } else {
-      setMessages([]);
+      setMessages({});
     }
   }, [user, searchParams]);
 
@@ -55,13 +58,13 @@ export default function MessagesWithChats() {
           setSearchParams={setSearchParams}
         />
       )}
-      {!userWithMessages && areMessagesLoading && <p>loading...</p>}
+      {!messagesWithPartner && areMessagesLoading && <p>loading...</p>}
       {messagesError && <p>{messagesError}</p>}
-      {messages && messages.user && (
+      {messages && messages.partner && (
         <Messages
-          key={searchParams.get("partner-id")}
-          partner={userWithMessages?.user}
-          messages={userWithMessages?.user.messages}
+          key={partnerId}
+          partner={messagesWithPartner?.partner}
+          messages={messagesWithPartner?.messages}
           fetchMessages={messagesFetch}
         />
       )}

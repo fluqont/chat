@@ -6,10 +6,10 @@ export async function groupRequestsGet(
   res: Response,
   next: NextFunction,
 ) {
-  const { userId } = req.params;
+  const { groupId, userId } = req.query;
   try {
     const groupRequests = await prisma.groupRequest.findMany({
-      where: { userId: Number(userId) },
+      where: { groupId: Number(groupId), userId: Number(userId) },
     });
     res.json({ groupRequests: groupRequests });
   } catch (err) {

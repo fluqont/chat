@@ -1,22 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 
-export async function groupGet(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const { groupId } = req.params;
-  try {
-    const messages = await prisma.message.findMany({
-      where: { groupId: Number(groupId) },
-    });
-    res.json({ messages: messages });
-  } catch (err) {
-    next(err);
-  }
-}
-
 export async function groupPost(
   req: Request,
   res: Response,
@@ -40,7 +24,10 @@ export async function groupPut(
 ) {
   const { groupId, name } = req.body;
   try {
-    await prisma.group.update({ data: { name: name }, where: { id: groupId } });
+    await prisma.group.update({
+      data: { name: name },
+      where: { id: Number(groupId) },
+    });
     res.json({ message: "OK" });
   } catch (err) {
     next(err);

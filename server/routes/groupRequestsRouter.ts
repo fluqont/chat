@@ -6,8 +6,8 @@ import {
 } from "../controllers/groupRequestsController.js";
 const router = Router();
 
-router.delete("/:groupId", groupRequestDelete);
-router.get("/:userId", groupRequestsGet);
-router.post("/:userId", groupRequestPost);
+router.get("/", groupRequestsGet);
+router.post("/", groupRequestPost);
+router.delete("/:groupRequestId", groupRequestDelete);
 
 export default router;

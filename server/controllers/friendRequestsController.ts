@@ -6,10 +6,13 @@ export async function friendRequestsGet(
   res: Response,
   next: NextFunction,
 ) {
-  const { userId } = req.params;
+  const { userId, requestedUserId } = req.query;
   try {
     const friendRequests = await prisma.friendRequest.findMany({
-      where: { userId: Number(userId) },
+      where: {
+        userId: Number(userId),
+        requestedUserId: Number(requestedUserId),
+      },
     });
     res.json({ friendRequests: friendRequests });
   } catch (err) {
@@ -22,7 +25,7 @@ export async function friendRequestPost(
   res: Response,
   next: NextFunction,
 ) {
-  const { userId, requestedUserId } = req.params;
+  const { userId, requestedUserId } = req.body;
   try {
     await prisma.friendRequest.create({
       data: {

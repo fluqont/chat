@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 import { StatusType } from "@prisma/client";
-import { decryptMessages } from "../helpers.js";
+import { getMessages } from "../services/messagesService.js";
 
 export async function userByUsernameGet(
   req: Request,
@@ -12,74 +12,81 @@ export async function userByUsernameGet(
   try {
     const user = await prisma.user.findUnique({
       where: { username: username as string },
-      include: req.user && {
-        requests: {
-          where: { requestedUserId: req.user.id },
-          include: { user: true },
-        },
-        requested: { where: { userId: req.user.id }, include: { user: true } },
-      },
     });
-    res.json({ user: user });
+    const friendshipStatus = getFriendshipStatus(
+      Number(req.user?.id),
+      Number(user?.id),
+    );
+    res.json({ user: user, friendshipStatus: friendshipStatus });
   } catch (err) {
     next(err);
   }
 }
+async function getFriendshipStatus(
+  currentUserId: number,
+  searchedUserId: number,
+): Promise<"FRIEND" | "REQUESTED" | "REQUEST" | null> {
+  if (isNaN(currentUserId) || isNaN(searchedUserId)) return null;
 
-export async function userGet(req: Request, res: Response, next: NextFunction) {
-  const { userId, partnerId } = req.params;
-  try {
-    const relatedFriendRequests = await prisma.friendRequest.findMany({
-      where: {
-        OR: [
-          {
-            AND: [
-              { userId: Number(userId) },
-              { requestedUserId: Number(partnerId) },
-            ],
-          },
-          {
-            AND: [
-              { requestedUserId: Number(userId) },
-              { userId: Number(partnerId) },
-            ],
-          },
-        ],
-      },
-    });
+  const friendRequests = await prisma.friendRequest.findMany({
+    where: {
+      OR: [
+        { userId: currentUserId, requestedUserId: searchedUserId },
+        { userId: searchedUserId, requestedUserId: currentUserId },
+      ],
+    },
+  });
 
-    if (relatedFriendRequests.length === 2) {
-      return next();
+  if (friendRequests.length === 2) {
+    return "FRIEND";
+  } else if (friendRequests.length === 1) {
+    if (friendRequests[0].userId === currentUserId) {
+      return "REQUEST";
+    } else {
+      return "REQUESTED";
     }
-
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: Number(partnerId) },
-      include: {
-        messages: {
-          where: { senderId: Number(partnerId), recipientId: Number(userId) },
-        },
-        gottenMessages: {
-          where: { senderId: Number(userId), recipientId: Number(partnerId) },
-        },
-      },
-    });
-
-    const decryptedSortedMessages = decryptMessages([
-      ...user.messages,
-      ...user.gottenMessages,
-    ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-
-    res.json({
-      user: {
-        ...user,
-        messages: decryptedSortedMessages,
-        gottenMessages: undefined,
-      },
-    });
-  } catch (err) {
-    next(err);
+  } else {
+    return null;
   }
 }
+
+// export async function userGet(req: Request, res: Response, next: NextFunction) {
+//   const { userId, partnerId } = req.params;
+//   try {
+//     const friendshipStatus = getFriendshipStatus(Number(userId), Number(partnerId))
+
+//     if (relatedFriendRequests.length === 2) {
+//       return next();
+//     }
+
+//     const user = await prisma.user.findUniqueOrThrow({
+//       where: { id: Number(partnerId) },
+//       include: {
+//         messages: {
+//           where: { senderId: Number(partnerId), recipientId: Number(userId) },
+//         },
+//         gottenMessages: {
+//           where: { senderId: Number(userId), recipientId: Number(partnerId) },
+//         },
+//       },
+//     });
+
+//     const decryptedSortedMessages = decryptMessages([
+//       ...user.messages,
+//       ...user.gottenMessages,
+//     ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+//     res.json({
+//       user: {
+//         ...user,
+//         messages: decryptedSortedMessages,
+//         gottenMessages: undefined,
+//       },
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// }
 
 export async function chatsGet(
   req: Request,
@@ -88,66 +95,76 @@ export async function chatsGet(
 ) {
   const { userId } = req.params;
   try {
-    const gotters = await prisma.user.findMany({
-      where: {
-        messages: {
-          some: { recipientId: Number(userId) },
-        },
-        id: {
-          not: Number(userId),
-        },
-      },
-      distinct: "username",
-    });
+    // const gotters = await prisma.user.findMany({
+    //   where: {
+    //     messages: {
+    //       some: { recipientId: Number(userId) },
+    //     },
+    //     id: {
+    //       not: Number(userId),
+    //     },
+    //   },
+    //   distinct: "username",
+    // });
 
-    const senders = await prisma.user.findMany({
-      where: {
-        gottenMessages: {
-          some: { senderId: Number(userId) },
-        },
-        id: {
-          not: Number(userId),
-        },
-      },
-      distinct: "username",
-    });
+    // const senders = await prisma.user.findMany({
+    //   where: {
+    //     gottenMessages: {
+    //       some: { senderId: Number(userId) },
+    //     },
+    //     id: {
+    //       not: Number(userId),
+    //     },
+    //   },
+    //   distinct: "username",
+    // });
 
     // deduplicate users
-    const userIds: Record<number, boolean> = {};
-    res.json({
-      users: [...gotters, ...senders].filter((user) => {
-        const seenBefore = userIds[user.id];
-        userIds[user.id] = true;
-        return !seenBefore;
-      }),
+    // const userIds: Record<number, boolean> = {};
+    // res.json({
+    //   users: [...gotters, ...senders].filter((user) => {
+    //     const seenBefore = userIds[user.id];
+    //     userIds[user.id] = true;
+    //     return !seenBefore;
+    //   }),
+    // });
+
+    const messages = await getMessages({ userId: userId });
+    const userIds = messages
+      .flatMap((message) => [message.senderId, message.recipientId])
+      .filter((id) => id) as number[];
+    const uniqueUserIds = [...new Set(userIds)];
+    const users = await prisma.user.findMany({
+      where: { id: { in: uniqueUserIds } },
     });
+    res.json({ users: users });
   } catch (err) {
     next(err);
   }
 }
 
-export async function friendGet(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
-  const { partnerId } = req.params;
-  try {
-    const user = await prisma.user.findUniqueOrThrow({
-      where: { id: Number(partnerId) },
-      include: { status: true, gottenMessages: true, messages: true },
-    });
+// export async function friendGet(
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) {
+//   const { partnerId } = req.params;
+//   try {
+//     const user = await prisma.user.findUniqueOrThrow({
+//       where: { id: Number(partnerId) },
+//       include: { status: true, gottenMessages: true, messages: true },
+//     });
 
-    const decryptedSortedMessages = decryptMessages([
-      ...user.messages,
-      ...user.gottenMessages,
-    ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+//     const decryptedSortedMessages = decryptMessages([
+//       ...user.messages,
+//       ...user.gottenMessages,
+//     ]).sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
-    res.json({ user: { ...user, messages: decryptedSortedMessages } });
-  } catch (err) {
-    next(err);
-  }
-}
+//     res.json({ user: { ...user, messages: decryptedSortedMessages } });
+//   } catch (err) {
+//     next(err);
+//   }
+// }
 
 // TODO: secure
 export async function userStatusPatch(
