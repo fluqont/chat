@@ -1,12 +1,27 @@
 .messages {
   display: grid;
-  gap: 1rem;
+  gap: 0.25rem;
 }
 
 .message {
   composes: box from "../routes/Search.module.css";
   width: fit-content;
+  min-width: 9rem;
   display: grid;
+  gap: 0.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header button {
+  flex-shrink: 0;
+}
+
+.nav {
+  display: flex;
   gap: 0.5rem;
 }
 

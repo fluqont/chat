@@ -4,6 +4,7 @@ import Form from "./Form";
 import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
+import { Edit, Trash } from "lucide-react";
 
 interface Message {
   id: number;
@@ -60,6 +61,8 @@ interface MessageProps {
 }
 
 const Message = ({ message, partnerId }: MessageProps) => {
+  const partnerMessage = message.senderId === partnerId;
+
   const originalMessageDate = new Date(message.createdAt);
   const isToday =
     originalMessageDate.toDateString() === new Date().toDateString();
@@ -82,7 +85,19 @@ const Message = ({ message, partnerId }: MessageProps) => {
         classes[message.senderId === partnerId ? "partner" : "user"],
       ].join(" ")}
     >
-      <p className={classes.text}>{message.text}</p>
+      <div className={classes.header}>
+        <p className={classes.text}>{message.text}</p>
+        {!partnerMessage && (
+          <nav className={classes.nav}>
+            <button className="icon-button" aria-label="delete message">
+              <Trash size={20} />
+            </button>
+            <button className="icon-button" aria-label="edit message">
+              <Edit size={20} />
+            </button>
+          </nav>
+        )}
+      </div>
       <p className={classes.time}>
         <time dateTime={message.createdAt}>{fullMessageDate}</time>
       </p>

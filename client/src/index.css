@@ -102,6 +102,10 @@ a:hover {
   text-decoration: none;
   padding: 0.5rem 1rem;
 }
+.icon-button {
+  background-color: transparent;
+  padding: 0;
+}
 .text {
   line-height: 1.5;
   max-width: 80ch;
