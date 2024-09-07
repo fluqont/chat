@@ -116,15 +116,16 @@ const SearchCard = (searchedUser: User) => {
                   : "")}
         </p>
       </div>
-      {user && !displayedStatus && !requestSent && (
-        <button
-          className={["primary", classes.friendRequestButton].join(" ")}
-          onClick={handleFriendRequestClick}
-        >
-          {respondSent ? "accept" : "send"} friend request
-        </button>
-      )}
-      <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
+      <div className={classes.end}>
+        {user && !displayedStatus && !requestSent && (
+          <button className="primary" onClick={handleFriendRequestClick}>
+            {respondSent ? "accept" : "send"} friend request
+          </button>
+        )}
+        {displayedStatus !== "you" && (
+          <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
+        )}
+      </div>
     </div>
   );
 };
