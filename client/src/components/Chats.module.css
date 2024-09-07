@@ -1,7 +1,10 @@
 .chats {
-  gap: 1rem;
+  display: grid;
+  gap: 0.5rem;
+  height: fit-content;
 }
 
 .chat {
   width: 100%;
+  padding: 0.75rem 0;
 }
