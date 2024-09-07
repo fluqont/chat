@@ -39,15 +39,17 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
 
     const data = new FormData(event.currentTarget);
 
-    fetchData(
-      edit ? `/messages/${edit}` : `/users/${user?.id}/messages/${partner.id}`,
-      {
-        method: edit ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json; charset=UTF-8" },
-        credentials: "include",
-        body: JSON.stringify({ text: data.get("message"), attachmentIds: [] }),
-      },
-    ).then(() => fetchMessages(String(partner.id)));
+    fetchData(edit ? `/messages/${edit}` : `/messages`, {
+      method: edit ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
+      credentials: "include",
+      body: JSON.stringify({
+        text: data.get("message"),
+        attachmentIds: [],
+        senderId: user?.id,
+        recipientId: partner.id,
+      }),
+    }).then(() => fetchMessages(String(partner.id)));
   }
 
   return (

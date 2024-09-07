@@ -31,7 +31,7 @@ export async function getMessages({
       ],
       groupId: Number(groupId) || undefined,
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: "asc" },
     take: Number(limit) || undefined,
     skip: Number(offset) || 0,
   });
