@@ -13,7 +13,7 @@ export async function userByUsernameGet(
     const user = await prisma.user.findUnique({
       where: { username: username as string },
     });
-    const friendshipStatus = getFriendshipStatus(
+    const friendshipStatus = await getFriendshipStatus(
       Number(req.user?.id),
       Number(user?.id),
     );
@@ -25,7 +25,7 @@ export async function userByUsernameGet(
 async function getFriendshipStatus(
   currentUserId: number,
   searchedUserId: number,
-): Promise<"FRIEND" | "REQUESTED" | "REQUEST" | null> {
+): Promise<"friend" | "waits for your answer" | "request sent" | null> {
   if (isNaN(currentUserId) || isNaN(searchedUserId)) return null;
 
   const friendRequests = await prisma.friendRequest.findMany({
@@ -38,12 +38,12 @@ async function getFriendshipStatus(
   });
 
   if (friendRequests.length === 2) {
-    return "FRIEND";
+    return "friend";
   } else if (friendRequests.length === 1) {
     if (friendRequests[0].userId === currentUserId) {
-      return "REQUEST";
+      return "request sent";
     } else {
-      return "REQUESTED";
+      return "waits for your answer";
     }
   } else {
     return null;

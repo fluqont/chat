@@ -1,5 +1,5 @@
 import classes from "./Form.module.css";
-import { FormHTMLAttributes, ReactNode } from "react";
+import { FormHTMLAttributes, forwardRef, ReactNode } from "react";
 
 interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   children: ReactNode;
@@ -7,14 +7,20 @@ interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
   row?: boolean;
 }
 
-const Form = ({ children, isLoading, row = false, ...props }: FormProps) => {
-  return (
-    <form className={[classes.form, row && classes.row].join(" ")} {...props}>
-      <section className={classes.formMain}>{children}</section>
-      <FormNav isLoading={isLoading} row={row} />
-    </form>
-  );
-};
+const Form = forwardRef<HTMLFormElement, FormProps>(
+  ({ children, isLoading, row = false, ...props }, ref) => {
+    return (
+      <form
+        ref={ref}
+        className={[classes.form, row && classes.row].join(" ")}
+        {...props}
+      >
+        <section className={classes.formMain}>{children}</section>
+        <FormNav isLoading={isLoading} row={row} />
+      </form>
+    );
+  },
+);
 
 interface FormNavProps {
   isLoading: boolean;

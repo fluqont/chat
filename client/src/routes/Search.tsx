@@ -1,4 +1,4 @@
-import { FormEvent, useContext } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch, { UseFetch } from "../hooks/useFetch";
@@ -9,14 +9,20 @@ import { Link } from "react-router-dom";
 function Search() {
   const { data, fetchData, error, isLoading } = useFetch();
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const formRef = useRef<HTMLFormElement>(null);
 
-    const data = new FormData(event.currentTarget);
+  function fetchUser() {
+    const data = new FormData(formRef.current ?? undefined);
 
     fetchData(`/users?username=${data.get("search")}`, {
       credentials: "include",
     });
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    fetchUser();
   }
 
   // search  results are displayed as cards with pfp (placeholder for now), username and status if they're friends (test this later)
@@ -25,7 +31,12 @@ function Search() {
     <section className="centered-section">
       <h1>Search</h1>
       <search className={classes.search}>
-        <Form isLoading={isLoading} row={true} onSubmit={handleSubmit}>
+        <Form
+          ref={formRef}
+          isLoading={isLoading}
+          row={true}
+          onSubmit={handleSubmit}
+        >
           {error && <p aria-live="polite">{error}</p>}
           <InputField
             label="exact search by username"
@@ -37,9 +48,10 @@ function Search() {
           <h3>Results</h3>
           {data && data.user ? (
             <SearchResults
-              data={data.user}
+              data={data}
               error={error}
               isLoading={isLoading}
+              fetchUser={fetchUser}
             />
           ) : (
             <output>no user found</output>
@@ -50,83 +62,98 @@ function Search() {
   );
 }
 
-const SearchResults = ({ data, error, isLoading }: UseFetch) => {
+interface SearchedUser {
+  user: User;
+  friendshipStatus: "friend" | "waits for your answer" | "request sent" | null;
+}
+
+const SearchResults = ({
+  data,
+  error,
+  isLoading,
+  fetchUser,
+}: UseFetch & { fetchUser: () => void }) => {
   if (error) return <p>{error}</p>;
   if (isLoading) return <p>loading...</p>;
 
   return (
     <>
-      {data && (
+      {data && data.user && (
         <div className={classes.box}>
-          <SearchCard {...(data as User)} />
+          <SearchCard {...(data as SearchedUser)} fetchUser={fetchUser} />
         </div>
       )}
     </>
   );
 };
 
-const SearchCard = (searchedUser: User) => {
+const SearchCard = ({
+  user: searchedUser,
+  friendshipStatus,
+  fetchUser,
+}: SearchedUser & { fetchUser: () => void }) => {
   const { user } = useContext(UserContext);
 
-  const displayedStatus = user?.username === searchedUser.username ? "you" : "";
+  const displayedStatus =
+    user?.username === searchedUser.username ? "you" : null;
 
-  const { data, fetchData } = useFetch();
+  const { data, fetchData, error } = useFetch();
+
+  useEffect(() => {
+    fetchUser();
+  }, [data]);
 
   const requestSent =
-    data?.message === "OK" ||
-    Boolean(searchedUser?.requested && searchedUser.requested[0]);
-
-  const respondSent = Boolean(
-    searchedUser?.requests && searchedUser.requests[0],
-  );
-
-  const friend = requestSent && respondSent;
+    friendshipStatus && friendshipStatus !== "waits for your answer";
 
   function handleFriendRequestClick() {
     fetchData(
-      `/friend-requests/${user?.id}/requested-users/${searchedUser.id}`,
+      `/friend-requests?userId=${user?.id}&requestedUserId=${searchedUser.id}`,
       {
         method: "POST",
+        headers: { "Content-Type": "application/json; charset=UTF-8" },
+        body: JSON.stringify({
+          userId: user?.id,
+          requestedUserId: searchedUser.id,
+        }),
+        credentials: "include",
       },
     );
   }
 
   return (
-    <div className={classes.searchCard}>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="64"
-        height="64"
-        viewBox="0 0 64 64"
-        fill="currentColor"
-        style={{ color: "var(--primary)" }}
-      >
-        <circle cx={32} cy={32} r={32}></circle>
-      </svg>
-      <div className={classes.details}>
-        <p className={classes.username}>{searchedUser.username}</p>
-        <p className={classes.status}>
-          {displayedStatus ||
-            (friend
-              ? "friend"
-              : requestSent
-                ? "friend request sent"
-                : respondSent
-                  ? "waiting for your response"
-                  : "")}
-        </p>
+    <>
+      {error && <p style={{ marginBottom: "1rem" }}>{error}</p>}
+      <div className={classes.searchCard}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="64"
+          height="64"
+          viewBox="0 0 64 64"
+          fill="currentColor"
+          style={{ color: "var(--primary)" }}
+        >
+          <circle cx={32} cy={32} r={32}></circle>
+        </svg>
+        <div className={classes.details}>
+          <p className={classes.username}>{searchedUser.username}</p>
+          <p className={classes.status}>
+            {displayedStatus ?? friendshipStatus}
+          </p>
+        </div>
+        <div className={classes.end}>
+          {user && !displayedStatus && !requestSent && (
+            <button className="primary" onClick={handleFriendRequestClick}>
+              {friendshipStatus === "waits for your answer" ? "accept" : "send"}{" "}
+              friend request
+            </button>
+          )}
+          {user && displayedStatus !== "you" && (
+            <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
+          )}
+        </div>
       </div>
-      <div className={classes.end}>
-        {user && !displayedStatus && !requestSent && (
-          <button className="primary" onClick={handleFriendRequestClick}>
-            {respondSent ? "accept" : "send"} friend request
-          </button>
-        )}
-        {user && displayedStatus !== "you" && (
-          <Link to={`/?partner-id=${searchedUser.id}`}>message</Link>
-        )}
-      </div>
-    </div>
+    </>
   );
 };
 
