@@ -5,13 +5,16 @@ import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
 
+interface Message {
+  id: number;
+  senderId: number;
+  text: string;
+  createdAt: string;
+}
+
 interface MessagesProps {
   partner: User;
-  messages: Array<{
-    id: number;
-    senderId: number;
-    text: string;
-  }>;
+  messages: Message[];
   fetchMessages: (partnerId: string) => void;
 }
 
@@ -38,15 +41,7 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
       <h2>{partner.username}</h2>
       {messages.length > 0 ? (
         messages.map((message) => (
-          <article
-            key={message.id}
-            className={[
-              classes.message,
-              classes[message.senderId === partner.id ? "partner" : "user"],
-            ].join(" ")}
-          >
-            {message.text}
-          </article>
+          <Message message={message} partnerId={partner.id} key={message.id} />
         ))
       ) : (
         <p>no messages yet</p>
@@ -58,4 +53,41 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
     </section>
   );
 };
+
+interface MessageProps {
+  partnerId: number;
+  message: Message;
+}
+
+const Message = ({ message, partnerId }: MessageProps) => {
+  const originalMessageDate = new Date(message.createdAt);
+  const isToday =
+    originalMessageDate.toDateString() === new Date().toDateString();
+
+  const messageDate = isToday
+    ? ""
+    : originalMessageDate.toLocaleString([], { dateStyle: "medium" }) + ", ";
+
+  const messageTime = originalMessageDate.toLocaleString([], {
+    timeStyle: "short",
+    hour12: false,
+  });
+
+  const fullMessageDate = `${messageDate}${messageTime}`;
+  return (
+    <article
+      key={message.id}
+      className={[
+        classes.message,
+        classes[message.senderId === partnerId ? "partner" : "user"],
+      ].join(" ")}
+    >
+      <p className={classes.text}>{message.text}</p>
+      <p className={classes.time}>
+        <time dateTime={message.createdAt}>{fullMessageDate}</time>
+      </p>
+    </article>
+  );
+};
+
 export default Messages;
