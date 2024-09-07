@@ -27,10 +27,14 @@ function User() {
       body: JSON.stringify({
         username: data.get("username"),
       }),
+      credentials: "include",
     });
   }
   function handleDeleteSubmit() {
-    fetchData(`/users/${user?.id}`, { method: "DELETE" });
+    fetchData(`/users/${user?.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
   }
 
   useEffect(() => {
@@ -86,6 +90,7 @@ const FriendRequests = () => {
     if (user) {
       fetchData(
         `/friend-requests?userId=${user.id}&requestedUserId=${user.id}`,
+        { credentials: "include" },
       );
     }
   }
@@ -96,7 +101,6 @@ const FriendRequests = () => {
 
   useEffect(() => {
     if (data && user) {
-      console.log("settin", data.friendRequests);
       setRequests(initRequests);
       data.friendRequests.map((request: any) => {
         setRequests((requests) => {

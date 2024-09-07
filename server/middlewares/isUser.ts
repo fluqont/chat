@@ -16,7 +16,7 @@ export async function isUserById(
   next: NextFunction,
 ) {
   const userId = Number(req.params.userId) || Number(req.query.userId);
-  if (!req.user || (req.user && userId !== req.user.id)) {
+  if (userId !== req.user?.id) {
     return next(new ErrorWithStatus("Unauthorized", 401));
   }
 
@@ -33,7 +33,7 @@ export async function isMessageOwner(
     const message = await prisma.message.findUnique({
       where: { id: Number(messageId) },
     });
-    if (!message || !req.user || message.senderId !== req.user?.id) {
+    if (!message || message.senderId !== req.user?.id) {
       return next(new ErrorWithStatus("Unauthorized", 401));
     }
 
@@ -53,7 +53,7 @@ export async function isGroupCreator(
     const group = await prisma.group.findUnique({
       where: { id: Number(groupId) },
     });
-    if (!group || !req.user || group.creatorId !== req.user?.id) {
+    if (!group || group.creatorId !== req.user?.id) {
       return next(new ErrorWithStatus("Unauthorized", 401));
     }
 
@@ -73,7 +73,7 @@ export async function isGroupRequestOwner(
     const groupRequest = await prisma.groupRequest.findUnique({
       where: { id: Number(groupRequestId) },
     });
-    if (!groupRequest || !req.user || groupRequest.userId !== req.user?.id) {
+    if (!groupRequest || groupRequest.userId !== req.user?.id) {
       return next(new ErrorWithStatus("Unauthorized", 401));
     }
 
@@ -93,7 +93,11 @@ export async function isFriendRequestOwner(
     const friendRequest = await prisma.friendRequest.findUnique({
       where: { id: Number(friendRequestId) },
     });
-    if (!friendRequest || !req.user || friendRequest.userId !== req.user?.id) {
+    if (
+      !friendRequest ||
+      (friendRequest.userId !== req.user?.id &&
+        friendRequest.requestedUserId !== req.user?.id)
+    ) {
       return next(new ErrorWithStatus("Unauthorized", 401));
     }
 

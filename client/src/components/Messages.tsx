@@ -42,13 +42,13 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
     fetchData(edit ? `/messages/${edit}` : `/messages`, {
       method: edit ? "PUT" : "POST",
       headers: { "Content-Type": "application/json; charset=UTF-8" },
-      credentials: "include",
       body: JSON.stringify({
         text: data.get("message"),
         attachmentIds: [],
         senderId: user?.id,
         recipientId: partner.id,
       }),
+      credentials: "include",
     }).then(() => fetchMessages(String(partner.id)));
 
     setEdit(false);

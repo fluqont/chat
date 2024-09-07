@@ -36,6 +36,7 @@ export default function MessagesWithChats() {
   function messagesFetch(partnerId: string) {
     fetchMessages(
       `/messages?userId=${user?.id}&partnerId=${partnerId}&partner=true`,
+      { credentials: "include" },
     ).then((data) => setMessages(data));
   }
 
