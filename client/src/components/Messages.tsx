@@ -34,6 +34,31 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
   const { user } = useContext(UserContext);
 
   const [edit, setEdit] = useState<false | number>(false);
+
+  const [ws, setWs] = useState<null | WebSocket>(null);
+  useEffect(() => {
+    if (user) {
+      const ws = new WebSocket(
+        `${import.meta.env.VITE_WS_URL}?userId=${user.id}&partnerId=${partner.id}`,
+      );
+
+      ws.onmessage = async ({ data }) => {
+        switch (data) {
+          case "message": {
+            setTimeout(() => {
+              fetchMessages(String(partner.id));
+            }, 1000);
+            break;
+          }
+        }
+      };
+
+      setWs(ws);
+
+      return () => ws.close();
+    }
+  }, []);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -52,6 +77,8 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
     }).then(() => fetchMessages(String(partner.id)));
 
     setEdit(false);
+
+    ws && ws.send(JSON.stringify({ type: "message" }));
   }
 
   return (
