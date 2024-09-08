@@ -5,6 +5,12 @@ import { wss } from "../app.js";
 
 type Ws = WebSocket & Record<string, any>;
 
+type Message =
+  | {
+      type: "message" | "get-status";
+    }
+  | { type: "status"; data: "ONLINE" | "OFFLINE" };
+
 export function handleConnnection(ws: Ws, req: IncomingMessage) {
   if (!req.url) return;
 
@@ -14,24 +20,42 @@ export function handleConnnection(ws: Ws, req: IncomingMessage) {
     ws.userId = query.userId;
 
     ws.on("message", (data) => {
-      const message: { type: "message" } = JSON.parse(data.toString());
-
-      const client = getClient();
+      const message: Message = JSON.parse(data.toString());
 
       switch (message.type) {
         case "message": {
+          const client = getClient();
           client && client.send("message");
+          break;
+        }
+        case "status": {
+          const client = getClient(true);
+
+          client && client.send(message.data);
+          break;
+        }
+        case "get-status": {
+          const client = getClient(true);
+
+          ws.send(client ? "ONLINE" : "OFFLINE");
           break;
         }
       }
     });
 
-    function getClient() {
+    ws.on("close", () => {
+      if (ws.userId) return;
+
+      const client = getClient(true);
+      client && client.send("OFFLINE");
+    });
+
+    function getClient(partner = false) {
       for (const client of wss.clients) {
         if (
           client !== ws &&
           client.readyState === WebSocket.OPEN &&
-          (client as Ws).userId === ws.partnerId
+          (client as Ws)[partner ? "partnerId" : "userId"] === ws.partnerId
         ) {
           return client;
         }

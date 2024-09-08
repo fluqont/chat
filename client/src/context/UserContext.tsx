@@ -36,6 +36,15 @@ const Context = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     if (data && data.user) {
       setUser(data.user);
+
+      const ws = new WebSocket(
+        `${import.meta.env.VITE_WS_URL}?partnerId=${data.user.id}`,
+      );
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: "status", data: "ONLINE" }));
+      };
+
+      return () => ws.close();
     }
   }, [data]);
 

@@ -41,6 +41,9 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
       const ws = new WebSocket(
         `${import.meta.env.VITE_WS_URL}?userId=${user.id}&partnerId=${partner.id}`,
       );
+      ws.onopen = () => {
+        ws.send(JSON.stringify({ type: "get-status" }));
+      };
 
       ws.onmessage = async ({ data }) => {
         switch (data) {
@@ -48,6 +51,10 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
             setTimeout(() => {
               fetchMessages(String(partner.id));
             }, 1000);
+            break;
+          }
+          default: {
+            console.log("some data" + data);
             break;
           }
         }
