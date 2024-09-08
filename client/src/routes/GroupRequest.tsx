@@ -5,9 +5,6 @@ import classes from "./User.module.css";
 import { useParams } from "react-router-dom";
 
 const GroupRequest = () => {
-  // 1. get friends
-  // 2. display friends with a button "send group request"
-
   const { user } = useContext(UserContext);
 
   const { data, fetchData, isLoading, error } = useFetch();
@@ -25,12 +22,6 @@ const GroupRequest = () => {
   useEffect(() => {
     fetchFriends();
   }, [user]);
-
-  useEffect(() => {
-    if (data) {
-      console.log(data);
-    }
-  }, [data]);
 
   if (error) return <p aria-live="polite">{error}</p>;
 

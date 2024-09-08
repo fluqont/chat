@@ -3,7 +3,7 @@ import Messages from "../components/Messages";
 import useFetch from "../hooks/useFetch";
 import classes from "./MessagesWtihChats.module.css";
 import { UserContext } from "../context/UserContext";
-import Chats from "../components/Chats";
+import Chats, { Chats as IChats } from "../components/Chats";
 import { useSearchParams } from "react-router-dom";
 
 export default function MessagesWithChats() {
@@ -63,7 +63,7 @@ export default function MessagesWithChats() {
       {chatsError && <p className="error-like-section">{chatsError}</p>}
       {chats && (
         <Chats
-          users={chats.users}
+          chats={chats as IChats}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
         />

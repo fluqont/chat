@@ -69,10 +69,18 @@ export async function chatsGet(
       }
     }
 
+    const createdGroups = await prisma.group.findMany({
+      where: { creatorId: Number(userId) },
+      select: { id: true },
+    });
+
     const uniqueUserIds = [...new Set(userIds)].filter(
       (id) => id !== Number(userId),
     );
-    const uniqueGroupIds = [...new Set(groupIds)];
+    const uniqueGroupIds = [
+      ...new Set(groupIds),
+      ...createdGroups.map((group) => group.id),
+    ];
 
     const users = await prisma.user.findMany({
       where: { id: { in: uniqueUserIds } },
