@@ -35,7 +35,8 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
 
   const [edit, setEdit] = useState<false | number>(false);
 
-  const [status, setStatus] = useState("OFFLINE");
+  const isFriend = partner.friendshipStatus === "friend";
+  const [status, setStatus] = useState(isFriend ? "OFFLINE" : null);
 
   const [ws, setWs] = useState<null | WebSocket>(null);
   useEffect(() => {
@@ -56,7 +57,9 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
             break;
           }
           default: {
-            console.log("some data" + data);
+            if (!isFriend) return;
+
+            setStatus(data);
             break;
           }
         }

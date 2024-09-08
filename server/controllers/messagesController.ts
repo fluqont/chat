@@ -10,17 +10,19 @@ export async function messagesGet(
 ) {
   try {
     const messages = await getMessages(req.query as Query);
-    const isFriend =
-      (await getFriendshipStatus(
-        Number(req.query.userId),
-        Number(req.query.partnerId),
-      )) === "friend";
+    const friendshipStatus = await getFriendshipStatus(
+      Number(req.query.userId),
+      Number(req.query.partnerId),
+    );
     const partner =
       req.query.partner === "true" &&
       (await prisma.user.findUnique({
         where: { id: Number(req.query.partnerId) },
       }));
-    res.json({ messages: messages, partner: partner, isFriend: isFriend });
+    res.json({
+      messages: messages,
+      partner: { ...partner, friendshipStatus: friendshipStatus },
+    });
   } catch (err) {
     next(err);
   }
