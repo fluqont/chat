@@ -70,6 +70,27 @@ export async function chatsGet(
   }
 }
 
+export async function friendsGet(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { userId } = req.params;
+  const { groupRequests } = req.query;
+  try {
+    const friends = await prisma.user.findMany({
+      where: {
+        requests: { some: { requestedUserId: Number(userId) } },
+        requested: { some: { userId: Number(userId) } },
+      },
+      include: { groupRequests: { where: { groupId: Number(groupRequests) } } },
+    });
+    res.json({ friends: friends });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function userUsernamePatch(
   req: Request,
   res: Response,
