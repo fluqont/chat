@@ -15,7 +15,10 @@ export async function isUserById(
   _: Response,
   next: NextFunction,
 ) {
-  const userId = Number(req.params.userId) || Number(req.query.userId);
+  const userId =
+    Number(req.params.userId) ||
+    Number(req.query.userId) ||
+    Number(req.body.userId);
   if (userId !== req.user?.id) {
     return next(new ErrorWithStatus("Unauthorized", 401));
   }
