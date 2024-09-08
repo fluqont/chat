@@ -1,7 +1,6 @@
 .header {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 2rem;
   align-items: center;
 }
@@ -17,7 +16,6 @@
 
 .search {
   padding: 0.5rem 3rem;
-  margin: auto;
 }
 
 .nav {
