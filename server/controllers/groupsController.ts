@@ -6,12 +6,12 @@ export async function groupPost(
   res: Response,
   next: NextFunction,
 ) {
-  const { creatorId, name } = req.body;
+  const { userId, name } = req.body;
   try {
-    await prisma.group.create({
-      data: { name: name, creatorId: Number(creatorId) },
+    const group = await prisma.group.create({
+      data: { name: name, creatorId: Number(userId) },
     });
-    res.json({ message: "OK" });
+    res.json({ group: group });
   } catch (err) {
     next(err);
   }
