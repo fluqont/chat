@@ -102,6 +102,9 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
           defaultValue={
             edit ? messages.find((message) => message.id === edit)?.text : ""
           }
+          required
+          minLength={1}
+          maxLength={255}
         />
       </Form>
     </section>

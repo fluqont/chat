@@ -19,7 +19,7 @@ const InputField = ({
       <label
         htmlFor={id}
         className={classes.label}
-        style={{ visibility: displayLabel ? "hidden" : "visible" }}
+        style={{ visibility: displayLabel ? "visible" : "hidden" }}
       >
         {label}
       </label>
