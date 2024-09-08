@@ -50,7 +50,13 @@ function User() {
         <h2>Change user</h2>
         <Form onSubmit={handleSubmit} isLoading={isLoading}>
           {error && <p aria-live="polite">{error}</p>}
-          <InputField label="username" defaultValue={user?.username} />
+          <InputField
+            label="username"
+            defaultValue={user?.username}
+            required
+            minLength={1}
+            maxLength={30}
+          />
         </Form>
         <button
           onClick={handleDeleteSubmit}

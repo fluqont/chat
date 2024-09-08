@@ -1,4 +1,4 @@
-import { SetURLSearchParams } from "react-router-dom";
+import { Link, SetURLSearchParams } from "react-router-dom";
 import { User } from "../context/UserContext";
 import classes from "./Chats.module.css";
 import { Plus } from "lucide-react";
@@ -13,10 +13,15 @@ const Chats = ({ users, searchParams, setSearchParams }: ChatsProps) => {
   return (
     <>
       <nav className={classes.chats}>
-        <button className={[classes.chat, classes.group, "primary"].join(" ")}>
+        <Link
+          to="/new-group"
+          className={[classes.chat, classes.group, "primary link-button"].join(
+            " ",
+          )}
+        >
           <Plus size={20} />
           new group
-        </button>
+        </Link>
         {users.length > 0 ? (
           users.map((user) => (
             <button
