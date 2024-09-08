@@ -6,8 +6,8 @@ import apiRouter from "./routes/index.js";
 import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 import passport, { prismaStore } from "./configs/auth.js";
-import WebSocket, { WebSocketServer } from "ws";
-import { parse } from "node:url";
+import { WebSocketServer } from "ws";
+import { handleConnnection } from "./services/websocketService.js";
 
 const app = express();
 app.use(cors<Request>({ origin: process.env.CLIENT_URL, credentials: true }));
@@ -37,42 +37,8 @@ app.listen(
     console.log("http://localhost:" + port),
 );
 
-type Ws = WebSocket & Record<string, any>;
-
-const wss = new WebSocketServer({ port: Number(process.env.WS_PORT) || 3001 });
-wss.on("connection", (ws: Ws, req) => {
-  if (!req.url) return;
-
-  try {
-    const { query } = parse(req.url, true);
-    ws.partnerId = query.partnerId;
-    ws.userId = query.userId;
-
-    ws.on("message", (data) => {
-      const message: { type: "message" } = JSON.parse(data.toString());
-
-      const client = getClient();
-
-      switch (message.type) {
-        case "message": {
-          client && client.send("message");
-          break;
-        }
-      }
-    });
-
-    function getClient() {
-      for (const client of wss.clients) {
-        if (
-          client !== ws &&
-          client.readyState === WebSocket.OPEN &&
-          (client as Ws).userId === ws.partnerId
-        ) {
-          return client;
-        }
-      }
-    }
-  } catch (err) {
-    console.error(err);
-  }
+export const wss = new WebSocketServer({
+  port: Number(process.env.WS_PORT) || 3001,
 });
+
+wss.on("connection", handleConnnection);
