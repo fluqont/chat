@@ -22,7 +22,7 @@ export default function MessagesWithChats() {
 
   useEffect(() => {
     if (user) {
-      fetchChats(`/users/${user.id}`, { credentials: "include" });
+      fetchChats(`/users/${user.id}/chats`, { credentials: "include" });
     }
   }, [user, messages]);
 

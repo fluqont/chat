@@ -6,6 +6,7 @@ import User from "./routes/User";
 import Search from "./routes/Search";
 import MessagesWithChats from "./routes/MessagesWithChats";
 import NewGroup from "./routes/NewGroup";
+import GroupRequest from "./routes/GroupRequest";
 
 const routes: RouteObject[] = [
   {
@@ -32,6 +33,10 @@ const routes: RouteObject[] = [
       {
         path: "/new-group",
         element: <NewGroup />,
+      },
+      {
+        path: "/groups/:groupId/request",
+        element: <GroupRequest />,
       },
     ],
   },
