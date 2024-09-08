@@ -22,7 +22,8 @@ export async function groupRequestPost(
   res: Response,
   next: NextFunction,
 ) {
-  const { groupId, userId } = req.params;
+  const { groupId } = req.params;
+  const { userId } = req.query;
   try {
     await prisma.groupRequest.create({
       data: {
