@@ -57,14 +57,30 @@ export async function chatsGet(
   const { userId } = req.params;
   try {
     const messages = await getMessages({ userId: userId });
-    const userIds = messages
-      .flatMap((message) => [message.senderId, message.recipientId])
-      .filter((id) => id && id !== Number(userId)) as number[];
-    const uniqueUserIds = [...new Set(userIds)];
+
+    const userIds: number[] = [];
+    const groupIds: number[] = [];
+
+    for (const message of messages) {
+      if (message.groupId) {
+        groupIds.push(message.groupId);
+      } else {
+        userIds.push(message.senderId, message.recipientId);
+      }
+    }
+
+    const uniqueUserIds = [...new Set(userIds)].filter(
+      (id) => id !== Number(userId),
+    );
+    const uniqueGroupIds = [...new Set(groupIds)];
+
     const users = await prisma.user.findMany({
       where: { id: { in: uniqueUserIds } },
     });
-    res.json({ users: users });
+    const groups = await prisma.group.findMany({
+      where: { id: { in: uniqueGroupIds } },
+    });
+    res.json({ users: users, groups: groups });
   } catch (err) {
     next(err);
   }
