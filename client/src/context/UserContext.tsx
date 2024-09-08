@@ -11,7 +11,7 @@ import useFetch from "../hooks/useFetch";
 export interface User {
   id: number;
   username: string;
-  status?: { type: string };
+  friendshipStatus: "friend" | "waits for your answer" | "request sent" | null;
 }
 
 interface IUserContext {

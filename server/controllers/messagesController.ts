@@ -19,15 +19,13 @@ export async function messagesGet(
       req.query.partner === "true" &&
       (await prisma.user.findUnique({
         where: { id: Number(req.query.partnerId) },
-        include: { status: isFriend },
       }));
-    res.json({ messages: messages, partner: partner });
+    res.json({ messages: messages, partner: partner, isFriend: isFriend });
   } catch (err) {
     next(err);
   }
 }
 
-// TODO: secure
 export async function messagePost(
   req: Request,
   res: Response,
@@ -50,7 +48,6 @@ export async function messagePost(
   }
 }
 
-// TODO: secure
 export async function messagePut(
   req: Request,
   res: Response,
@@ -71,7 +68,6 @@ export async function messagePut(
   }
 }
 
-// TODO: secure
 export async function messageDelete(
   req: Request,
   res: Response,

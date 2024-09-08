@@ -26,7 +26,6 @@ export async function signupPost(
       data: {
         username: username,
         password: hashedPassword,
-        status: { create: { type: "ONLINE" } },
       },
     });
     res.json({ message: "OK" });

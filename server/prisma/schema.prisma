@@ -11,7 +11,6 @@ model User {
   id             Int             @id @default(autoincrement())
   username       String          @unique @db.VarChar(30)
   password       String          @db.VarChar(255)
-  status         Status?
   requests       FriendRequest[] @relation("Requests")
   requested      FriendRequest[] @relation("Requested")
   groups         Group[]         @relation("Groups")
@@ -26,20 +25,6 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
-}
-
-model Status {
-  id        Int        @id @default(autoincrement())
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int        @unique
-  type      StatusType @default(ONLINE)
-  updatedAt DateTime   @updatedAt
-}
-
-enum StatusType {
-  TYPING
-  ONLINE
-  OFFLINE
 }
 
 model FriendRequest {
