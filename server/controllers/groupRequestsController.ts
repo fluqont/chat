@@ -9,7 +9,8 @@ export async function groupRequestsGet(
   const { groupId, userId } = req.query;
   try {
     const groupRequests = await prisma.groupRequest.findMany({
-      where: { groupId: Number(groupId), userId: Number(userId) },
+      where: { groupId: Number(groupId) || undefined, userId: Number(userId) },
+      include: { group: true },
     });
     res.json({ groupRequests: groupRequests });
   } catch (err) {

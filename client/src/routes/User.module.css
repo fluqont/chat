@@ -10,7 +10,12 @@
 
 .request {
   composes: box from "./Search.module.css";
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
+}
+
+.nav {
+  display: flex;
+  gap: 0.5rem;
 }
