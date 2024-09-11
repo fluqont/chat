@@ -13,7 +13,7 @@ const routes: RouteObject[] = [
     path: "/",
     element: <Root />,
     children: [
-      { index: true, element: <MessagesWithChats /> },
+      { index: true, element: <MessagesWithChats key={1} /> },
       {
         path: "/signup",
         element: <Signup />,

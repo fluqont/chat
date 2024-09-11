@@ -78,7 +78,7 @@ export default function MessagesWithChats() {
         <p className="error-like-section">loading...</p>
       )}
       {messagesError && <p className="error-like-section">{messagesError}</p>}
-      {messages && messagesWithPartner && (
+      {id && messages && messagesWithPartner && (
         <Messages
           key={id}
           partner={messagesWithPartner?.partner}

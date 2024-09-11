@@ -120,7 +120,7 @@ const Messages = ({
             status && classes[status.toLowerCase()],
           ].join(" ")}
         >
-          {status && status}
+          {status && !group && status}
         </small>
       </h2>
       {messages.length > 0 ? (
