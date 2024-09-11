@@ -26,6 +26,39 @@ export async function isUserById(
   next();
 }
 
+export async function isUserByIdOrInGroup(
+  req: Request,
+  _: Response,
+  next: NextFunction,
+) {
+  const userId =
+    Number(req.params.userId) ||
+    Number(req.query.userId) ||
+    Number(req.body.userId);
+  const groupId = Number(req.query.groupId);
+  if (userId) {
+    if (userId !== req.user?.id) {
+      return next(new ErrorWithStatus("Unauthorized", 401));
+    }
+  } else {
+    try {
+      const group = await prisma.group.findUnique({
+        where: {
+          id: Number(groupId),
+        },
+        include: { members: true },
+      });
+      if (!group?.members.find((user) => user.id === req.user?.id)) {
+        return next(new ErrorWithStatus("Unauthorized", 401));
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  next();
+}
+
 export async function isSender(req: Request, _: Response, next: NextFunction) {
   const userId = Number(req.body.senderId);
 

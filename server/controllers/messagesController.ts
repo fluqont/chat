@@ -10,18 +10,26 @@ export async function messagesGet(
 ) {
   try {
     const messages = await getMessages(req.query as Query);
-    const friendshipStatus = await getFriendshipStatus(
-      Number(req.query.userId),
-      Number(req.query.partnerId),
-    );
     const partner =
       req.query.partner === "true" &&
       (await prisma.user.findUnique({
         where: { id: Number(req.query.partnerId) },
       }));
+    const group =
+      req.query.groupId &&
+      (await prisma.group.findUnique({
+        where: { id: Number(req.query.groupId) },
+      }));
+    const friendshipStatus = partner
+      ? await getFriendshipStatus(
+          Number(req.query.userId),
+          Number(req.query.partnerId),
+        )
+      : null;
     res.json({
       messages: messages,
-      partner: { ...partner, friendshipStatus: friendshipStatus },
+      partner: partner && { ...partner, friendshipStatus: friendshipStatus },
+      group: group,
     });
   } catch (err) {
     next(err);
@@ -34,14 +42,13 @@ export async function messagePost(
   next: NextFunction,
 ) {
   const { senderId, recipientId, groupId, text } = req.body;
-
   try {
     await prisma.message.create({
       data: {
         text: encrypt(text),
         senderId: Number(senderId),
-        recipientId: Number(recipientId),
-        groupId: Number(groupId),
+        recipientId: Number(recipientId) || undefined,
+        groupId: Number(groupId) || undefined,
       },
     });
     res.json({ message: "OK" });

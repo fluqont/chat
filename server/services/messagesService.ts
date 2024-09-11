@@ -16,18 +16,26 @@ export async function getMessages({
   limit,
   offset,
 }: Query) {
+  groupId &&
+    console.log(
+      await prisma.message.findMany({
+        where: { groupId: Number(groupId) || undefined },
+      }),
+    );
   const messages = await prisma.message.findMany({
     where: {
-      OR: [
-        {
-          senderId: Number(userId),
-          recipientId: Number(partnerId) || undefined,
-        },
-        {
-          senderId: Number(partnerId) || undefined,
-          recipientId: Number(userId),
-        },
-      ],
+      OR: !groupId
+        ? [
+            {
+              senderId: Number(userId) || undefined,
+              recipientId: Number(partnerId) || undefined,
+            },
+            {
+              senderId: Number(partnerId) || undefined,
+              recipientId: Number(userId) || undefined,
+            },
+          ]
+        : undefined,
       groupId: Number(groupId) || undefined,
     },
     orderBy: { createdAt: "asc" },

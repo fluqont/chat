@@ -13,6 +13,7 @@ import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
 import { Edit, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
+import { Group } from "./Chats";
 
 interface Message {
   id: number;
@@ -23,26 +24,33 @@ interface Message {
 }
 
 interface MessagesProps {
-  partner: User;
+  partner?: User;
+  group?: Group;
   messages: Message[];
-  fetchMessages: (partnerId: string) => void;
+  fetchMessages: (id: string, group: boolean) => void;
 }
 
-const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
+const Messages = ({
+  partner,
+  group,
+  messages,
+  fetchMessages,
+}: MessagesProps) => {
   const { fetchData, error, isLoading } = useFetch();
 
   const { user } = useContext(UserContext);
 
   const [edit, setEdit] = useState<false | number>(false);
 
-  const isFriend = partner.friendshipStatus === "friend";
+  const isPartner = partner;
+  const isFriend = isPartner ? partner.friendshipStatus === "friend" : false;
   const [status, setStatus] = useState(isFriend ? "OFFLINE" : null);
 
   const [ws, setWs] = useState<null | WebSocket>(null);
   useEffect(() => {
     if (user) {
       const ws = new WebSocket(
-        `${import.meta.env.VITE_WS_URL}?userId=${user.id}&partnerId=${partner.id}`,
+        `${import.meta.env.VITE_WS_URL}?userId=${user.id}&${partner ? "partnerId=" + partner.id : "groupId" + group!.id}`,
       );
       ws.onopen = () => {
         ws.send(JSON.stringify({ type: "get-status" }));
@@ -52,7 +60,11 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         switch (data) {
           case "message": {
             setTimeout(() => {
-              fetchMessages(String(partner.id));
+              if (isPartner) {
+                fetchMessages(String(partner.id), false);
+              } else {
+                fetchMessages(String(group!.id), true);
+              }
             }, 1000);
             break;
           }
@@ -83,10 +95,15 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         text: data.get("message"),
         attachmentIds: [],
         senderId: user?.id,
-        recipientId: partner.id,
+        recipientId: isPartner ? partner.id : null,
+        groupId: !isPartner ? group!.id : null,
       }),
       credentials: "include",
-    }).then(() => fetchMessages(String(partner.id)));
+    }).then(() =>
+      isPartner
+        ? fetchMessages(String(partner.id), false)
+        : fetchMessages(String(group!.id), true),
+    );
 
     setEdit(false);
 
@@ -96,7 +113,7 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
   return (
     <section className={classes.messages}>
       <h2>
-        <span>{partner.username}</span>
+        <span>{isPartner ? partner.username : group!.name}</span>
         <small
           className={[
             classes.status,
@@ -110,7 +127,7 @@ const Messages = ({ partner, messages, fetchMessages }: MessagesProps) => {
         messages.map((message) => (
           <Message
             message={message}
-            partnerId={partner.id}
+            partnerId={isPartner ? partner.id : -1}
             setEdit={setEdit}
             key={message.id}
           />

@@ -9,7 +9,11 @@ export async function groupPost(
   const { userId, name } = req.body;
   try {
     const group = await prisma.group.create({
-      data: { name: name, creatorId: Number(userId) },
+      data: {
+        name: name,
+        creatorId: Number(userId),
+        members: { connect: { id: Number(userId) } },
+      },
     });
     res.json({ group: group });
   } catch (err) {

@@ -65,7 +65,7 @@ export async function chatsGet(
       if (message.groupId) {
         groupIds.push(message.groupId);
       } else {
-        userIds.push(message.senderId, message.recipientId);
+        userIds.push(message.senderId, message.recipientId!);
       }
     }
 

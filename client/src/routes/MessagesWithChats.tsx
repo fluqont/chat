@@ -33,17 +33,23 @@ export default function MessagesWithChats() {
     isLoading: areMessagesLoading,
   } = useFetch();
 
-  function messagesFetch(partnerId: string) {
+  function messagesFetch(id: string, group: boolean) {
     fetchMessages(
-      `/messages?userId=${user?.id}&partnerId=${partnerId}&partner=true`,
+      group
+        ? `/messages?groupId=${id}`
+        : `/messages?userId=${user?.id}&partnerId=${partnerId}&partner=true`,
       { credentials: "include" },
     ).then((data) => setMessages(data));
   }
 
   const partnerId = searchParams.get("partner-id");
+  const groupId = searchParams.get("group-id");
+  const id = partnerId ?? groupId;
   useEffect(() => {
     if (user && partnerId) {
-      messagesFetch(partnerId);
+      messagesFetch(partnerId, false);
+    } else if (user && groupId) {
+      messagesFetch(groupId, true);
     } else {
       setMessages({});
     }
@@ -72,15 +78,16 @@ export default function MessagesWithChats() {
         <p className="error-like-section">loading...</p>
       )}
       {messagesError && <p className="error-like-section">{messagesError}</p>}
-      {messages && messages.partner && (
+      {messages && messagesWithPartner && (
         <Messages
-          key={partnerId}
+          key={id}
           partner={messagesWithPartner?.partner}
           messages={messagesWithPartner?.messages}
+          group={messagesWithPartner?.group}
           fetchMessages={messagesFetch}
         />
       )}
-      {!partnerId && <p className="error-like-section">Select chat</p>}
+      {!id && <p className="error-like-section">Select chat</p>}
     </section>
   );
 }

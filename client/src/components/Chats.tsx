@@ -3,7 +3,7 @@ import { User } from "../context/UserContext";
 import classes from "./Chats.module.css";
 import { Plus } from "lucide-react";
 
-interface Group {
+export interface Group {
   id: number;
   name: string;
 }
@@ -40,6 +40,7 @@ const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
               label={user.username}
               searchParams={searchParams}
               setSearchParams={setSearchParams}
+              searchParam="partner-id"
             />
           ))
         ) : (
@@ -55,6 +56,7 @@ const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
                 label={group.name}
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
+                searchParam="group-id"
               />
             ))}
           </>
@@ -69,15 +71,22 @@ interface Chat {
   label: string;
   searchParams: URLSearchParams;
   setSearchParams: SetURLSearchParams;
+  searchParam: string;
 }
 
-const Chat = ({ id, label, searchParams, setSearchParams }: Chat) => {
+const Chat = ({
+  id,
+  label,
+  searchParams,
+  setSearchParams,
+  searchParam,
+}: Chat) => {
   return (
     <button
-      onClick={() => setSearchParams({ "partner-id": String(id) })}
+      onClick={() => setSearchParams({ [searchParam]: String(id) })}
       className={[
         classes.chat,
-        Number(searchParams.get("partner-id")) === id ? "primary" : "surface",
+        Number(searchParams.get(searchParam)) === id ? "primary" : "surface",
       ].join(" ")}
     >
       {label}
