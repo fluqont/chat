@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 
 export interface Group {
   id: number;
+  creatorId: number;
   name: string;
 }
 

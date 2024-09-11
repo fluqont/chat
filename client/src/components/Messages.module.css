@@ -12,6 +12,11 @@
   gap: 0.25rem;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+}
+
 .message {
   composes: box from "../routes/Search.module.css";
   width: fit-content;

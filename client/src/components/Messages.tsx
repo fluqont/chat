@@ -14,6 +14,7 @@ import useFetch from "../hooks/useFetch";
 import { Edit, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
 import { Group } from "./Chats";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   id: number;
@@ -36,6 +37,8 @@ const Messages = ({
   messages,
   fetchMessages,
 }: MessagesProps) => {
+  const navigate = useNavigate();
+
   const { fetchData, error, isLoading } = useFetch();
 
   const { user } = useContext(UserContext);
@@ -110,27 +113,53 @@ const Messages = ({
     ws && ws.send(JSON.stringify({ type: "message" }));
   }
 
+  const {
+    data,
+    fetchData: fetchGroupDelete,
+    error: groupDeleteError,
+  } = useFetch();
+
+  function handleGroupDelete() {
+    fetchGroupDelete(`/groups/${group?.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+  }
+
+  useEffect(() => {
+    if (data?.message === "OK") {
+      navigate("/");
+    }
+  }, [data]);
+
   return (
     <section className={classes.messages}>
-      <h2>
-        <span>{isPartner ? partner.username : group!.name}</span>
-        <small
-          className={[
-            classes.status,
-            status && classes[status.toLowerCase()],
-          ].join(" ")}
-        >
-          {status && !group && status}
-        </small>
-      </h2>
+      <header className={classes.header}>
+        <h2>
+          <span>{isPartner ? partner.username : group!.name}</span>
+          <small
+            className={[
+              classes.status,
+              status && classes[status.toLowerCase()],
+            ].join(" ")}
+          >
+            {status && !group && status}
+          </small>
+        </h2>
+        {group && group.creatorId === user?.id && (
+          <button
+            className="icon-button"
+            aria-label="delete group"
+            onClick={handleGroupDelete}
+          >
+            <Trash size={20} />
+          </button>
+        )}
+        {error && <p>{error}</p>}
+      </header>
       {messages.length > 0 ? (
         messages.map((message) => (
-          <Message
-            message={message}
-            partnerId={isPartner ? partner.id : -1}
-            setEdit={setEdit}
-            key={message.id}
-          />
+          <Message message={message} setEdit={setEdit} key={message.id} />
         ))
       ) : (
         <p>no messages yet</p>
@@ -168,12 +197,11 @@ const Messages = ({
 };
 
 interface MessageProps {
-  partnerId: number;
   message: Message;
   setEdit: Dispatch<SetStateAction<false | number>>;
 }
 
-const Message = ({ message, partnerId, setEdit }: MessageProps) => {
+const Message = ({ message, setEdit }: MessageProps) => {
   const [deleted, setDeleted] = useState(false);
 
   const { user } = useContext(UserContext);
