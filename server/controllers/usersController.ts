@@ -69,8 +69,13 @@ export async function chatsGet(
       }
     }
 
-    const createdGroups = await prisma.group.findMany({
-      where: { creatorId: Number(userId) },
+    const memberGroups = await prisma.group.findMany({
+      where: {
+        OR: [
+          { creatorId: Number(userId) },
+          { members: { some: { id: Number(userId) } } },
+        ],
+      },
       select: { id: true },
     });
 
@@ -79,7 +84,7 @@ export async function chatsGet(
     );
     const uniqueGroupIds = [
       ...new Set(groupIds),
-      ...createdGroups.map((group) => group.id),
+      ...memberGroups.map((group) => group.id),
     ];
 
     const users = await prisma.user.findMany({

@@ -176,7 +176,9 @@ interface MessageProps {
 const Message = ({ message, partnerId, setEdit }: MessageProps) => {
   const [deleted, setDeleted] = useState(false);
 
-  const partnerMessage = message.senderId === partnerId;
+  const { user } = useContext(UserContext);
+
+  const ownMessage = message.senderId === user?.id;
 
   const createdAt = getDate(message.createdAt);
   const updatedAt = getDate(message.updatedAt);
@@ -202,13 +204,13 @@ const Message = ({ message, partnerId, setEdit }: MessageProps) => {
       key={message.id}
       className={[
         classes.message,
-        classes[message.senderId === partnerId ? "partner" : "user"],
+        classes[ownMessage ? "user" : "partner"],
       ].join(" ")}
     >
       {error && <p aria-live="polite">{error}</p>}
       <div className={classes.header}>
         <p className={classes.text}>{message.text}</p>
-        {!partnerMessage && (
+        {ownMessage && (
           <nav className={classes.nav}>
             <button
               className="icon-button"

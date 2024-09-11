@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  groupRequestAcceptPost,
   groupRequestDelete,
   groupRequestPost,
   groupRequestsGet,
@@ -12,6 +13,7 @@ import {
 const router = Router();
 
 router.get("/", isUserById, groupRequestsGet);
+router.get("/:groupRequestId", isGroupRequestOwner, groupRequestAcceptPost);
 router.post("/:groupId", isGroupCreator, groupRequestPost);
 router.delete("/:groupRequestId", isGroupRequestOwner, groupRequestDelete);
 

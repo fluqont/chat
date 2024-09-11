@@ -38,6 +38,26 @@ export async function groupRequestPost(
   }
 }
 
+export async function groupRequestAcceptPost(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { groupRequestId } = req.params;
+  try {
+    const groupRequest = await prisma.groupRequest.delete({
+      where: { id: Number(groupRequestId) },
+    });
+    await prisma.group.update({
+      where: { id: Number(groupRequest.groupId) },
+      data: { members: { connect: { id: Number(req.user?.id) } } },
+    });
+    res.json({ message: "OK" });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function groupRequestDelete(
   req: Request,
   res: Response,

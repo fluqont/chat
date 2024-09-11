@@ -254,6 +254,20 @@ const Requests = ({
     }
   }, [data]);
 
+  const { data: acceptData, fetchData: fetchAccept } = useFetch();
+
+  function handleAccept(id: number) {
+    fetchAccept(`/group-requests/${id}`, {
+      credentials: "include",
+    });
+  }
+
+  useEffect(() => {
+    if (acceptData) {
+      fetchRequests();
+    }
+  }, [acceptData]);
+
   return (
     <article>
       <h3>{children}</h3>
@@ -264,7 +278,16 @@ const Requests = ({
               <Request
                 requestId={request.id}
                 username={group ? request.group!.name : request.user!.username}
-                accept={group && <button className="primary">accept</button>}
+                accept={
+                  group && (
+                    <button
+                      className="primary"
+                      onClick={() => handleAccept(request.id)}
+                    >
+                      accept
+                    </button>
+                  )
+                }
                 handleDelete={handleDelete}
               />
             </li>
