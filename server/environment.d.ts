@@ -6,6 +6,8 @@ declare global {
       WS_PORT: string;
       DATABASE_URL: string;
       TEST_DATABASE_URL: string;
+      SUPABASE_ANON_KEY: string;
+      SUPABASE_PROJECT_URL: string;
       CLIENT_URL: string;
       SECRET: string;
     }
