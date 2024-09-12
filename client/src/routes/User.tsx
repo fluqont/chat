@@ -65,10 +65,10 @@ function User() {
     if (user) {
       const formData = new FormData(event.currentTarget);
 
-      fetchUpload(`/users/${user.id}/upload`, {
-        method: "POST",
-        credentials: "include",
+      fetchUpload(`/users/${user.id}/profile-picture`, {
+        method: "PATCH",
         body: formData,
+        credentials: "include",
       });
     }
   }
