@@ -16,9 +16,10 @@
   flex-wrap: wrap;
 }
 
-.image {
+.pfp {
   width: 4rem;
   height: 4rem;
+  object-fit: contain;
   border-radius: var(--rounded);
 }
 

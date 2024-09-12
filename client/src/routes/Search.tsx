@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef } from "react";
 import Form from "../components/Form";
 import InputField from "../components/InputField";
 import useFetch, { UseFetch } from "../hooks/useFetch";
@@ -63,6 +63,7 @@ function Search() {
 interface SearchedUser {
   user: User;
   friendshipStatus: "friend" | "waits for your answer" | "request sent" | null;
+  pfpUrl: string;
 }
 
 const SearchResults = ({
@@ -88,6 +89,7 @@ const SearchResults = ({
 const SearchCard = ({
   user: searchedUser,
   friendshipStatus,
+  pfpUrl,
   fetchUser,
 }: SearchedUser & { fetchUser: () => void }) => {
   const { user } = useContext(UserContext);
@@ -121,20 +123,19 @@ const SearchCard = ({
     );
   }
 
+  console.log(user);
+
   return (
     <>
       {error && <p style={{ marginBottom: "1rem" }}>{error}</p>}
       <div className={classes.searchCard}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="64"
-          height="64"
-          viewBox="0 0 64 64"
-          fill="currentColor"
-          style={{ color: "var(--primary)" }}
-        >
-          <circle cx={32} cy={32} r={32}></circle>
-        </svg>
+        <img
+          src={pfpUrl}
+          width={64}
+          height={64}
+          className={classes.pfp}
+          alt="user's profile picture"
+        />
         <div className={classes.details}>
           <p className={classes.username}>{searchedUser.username}</p>
           <p className={classes.status}>

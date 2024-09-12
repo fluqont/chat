@@ -15,11 +15,23 @@ export async function userByUsernameGet(
     const user = await prisma.user.findUnique({
       where: { username: username as string },
     });
+
+    if (!user) {
+      return next(new ErrorWithStatus("User not found", 404));
+    }
+
     const friendshipStatus = await getFriendshipStatus(
       Number(req.user?.id),
-      Number(user?.id),
+      Number(user.id),
     );
-    res.json({ user: user, friendshipStatus: friendshipStatus });
+    const { publicUrl } = await supabase.storage
+      .from(String(user.id))
+      .getPublicUrl(String(user.id)).data;
+    res.json({
+      user: user,
+      friendshipStatus: friendshipStatus,
+      pfpUrl: publicUrl,
+    });
   } catch (err) {
     next(err);
   }
