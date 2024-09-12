@@ -136,18 +136,20 @@ const Messages = ({
   return (
     <section className={classes.messages}>
       <header className={classes.header}>
-        {partner && <Pfp url={partner.pfpUrl} />}
-        <h2>
-          <span>{isPartner ? partner.username : group!.name}</span>
-          <small
-            className={[
-              classes.status,
-              status && classes[status.toLowerCase()],
-            ].join(" ")}
-          >
-            {status && !group && status}
-          </small>
-        </h2>
+        <div className={classes.right}>
+          {partner && <Pfp url={partner.pfpUrl} />}
+          <h2>
+            <span>{isPartner ? partner.username : group!.name}</span>
+            <small
+              className={[
+                classes.status,
+                status && classes[status.toLowerCase()],
+              ].join(" ")}
+            >
+              {status && !group && status}
+            </small>
+          </h2>
+        </div>
         {group && group.creatorId === user?.id && (
           <button
             className="icon-button"
