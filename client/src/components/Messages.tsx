@@ -42,8 +42,6 @@ const Messages = ({
 }: MessagesProps) => {
   const navigate = useNavigate();
 
-  const { fetchData, error, isLoading } = useFetch();
-
   const { user } = useContext(UserContext);
 
   const [edit, setEdit] = useState<false | number>(false);
@@ -89,33 +87,6 @@ const Messages = ({
     }
   }, []);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const data = new FormData(event.currentTarget);
-
-    fetchData(edit ? `/messages/${edit}` : `/messages`, {
-      method: edit ? "PUT" : "POST",
-      headers: { "Content-Type": "application/json; charset=UTF-8" },
-      body: JSON.stringify({
-        text: data.get("message"),
-        attachmentIds: [],
-        senderId: user?.id,
-        recipientId: isPartner ? partner.id : null,
-        groupId: !isPartner ? group!.id : null,
-      }),
-      credentials: "include",
-    }).then(() =>
-      isPartner
-        ? fetchMessages(String(partner.id), false)
-        : fetchMessages(String(group!.id), true),
-    );
-
-    setEdit(false);
-
-    ws && ws.send(JSON.stringify({ type: "message" }));
-  }
-
   const {
     data,
     fetchData: fetchGroupDelete,
@@ -134,24 +105,6 @@ const Messages = ({
       navigate("/");
     }
   }, [data]);
-
-  const [files, setFiles] = useState<FileList | null>(null);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const { files } = event.currentTarget;
-    if (files) {
-      setFiles(files);
-    }
-  }
-
-  function clearInput() {
-    if (inputRef.current) {
-      inputRef.current.value = "";
-      setFiles(null);
-    }
-  }
 
   return (
     <section className={classes.messages}>
@@ -179,7 +132,6 @@ const Messages = ({
             <Trash size={20} />
           </button>
         )}
-        {error && <p>{error}</p>}
       </header>
       {groupDeleteError && <p aria-live="polite">{groupDeleteError}</p>}
       {messages.length > 0 ? (
@@ -189,64 +141,145 @@ const Messages = ({
       ) : (
         <p>no messages yet</p>
       )}
-      <div style={{ marginTop: "2rem" }}>
-        {files && (
-          <button onClick={clearInput} className="surface">
-            delete attachments
-          </button>
-        )}
-        {files && (
-          <ul role="list" style={{ margin: "1rem 0" }}>
-            {Array.from(files).map((file) => (
-              <p key={file.lastModified}>{file.name}</p>
-            ))}
-          </ul>
-        )}
-        <Form
-          isLoading={isLoading}
-          row={true}
-          onSubmit={handleSubmit}
-          submitProps={{
-            children: <Send size={20} />,
-            style: {
-              padding: "0",
-              height: "3rem",
-              width: "3rem",
-            },
-            "aria-label": "send",
-          }}
-        >
-          {error && <p aria-live="polite">{error}</p>}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ position: "relative", paddingRight: "1rem" }}>
-              <Paperclip />
-              <InputField
-                onChange={handleChange}
-                label="attachments"
-                type="file"
-                displayLabel={false}
-                style={{ position: "absolute", inset: 0, opacity: 0 }}
-                multiple
-                ref={inputRef}
-              />
-            </div>
+      <NewMessage
+        fetchMessages={fetchMessages}
+        edit={edit}
+        group={group}
+        isPartner={isPartner}
+        messages={messages}
+        partner={partner}
+        setEdit={setEdit}
+        ws={ws}
+      />
+    </section>
+  );
+};
+
+interface NewMessageProps {
+  fetchMessages: (id: string, group: boolean) => void;
+  edit: false | number;
+  setEdit: Dispatch<SetStateAction<NewMessageProps["edit"]>>;
+  isPartner: User | undefined;
+  partner?: User;
+  group?: Group;
+  messages: Message[];
+  ws: WebSocket | null;
+}
+
+const NewMessage = ({
+  fetchMessages,
+  edit,
+  setEdit,
+  isPartner,
+  partner,
+  group,
+  messages,
+  ws,
+}: NewMessageProps) => {
+  const [files, setFiles] = useState<FileList | null>(null);
+
+  const { fetchData, error, isLoading } = useFetch();
+
+  const { user } = useContext(UserContext);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+
+    fetchData(edit ? `/messages/${edit}` : `/messages`, {
+      method: edit ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json; charset=UTF-8" },
+      body: JSON.stringify({
+        text: data.get("message"),
+        attachmentIds: [],
+        senderId: user?.id,
+        recipientId: isPartner ? partner!.id : null,
+        groupId: !isPartner ? group!.id : null,
+      }),
+      credentials: "include",
+    }).then(() =>
+      isPartner
+        ? fetchMessages(String(partner!.id), false)
+        : fetchMessages(String(group!.id), true),
+    );
+
+    setEdit(false);
+
+    ws && ws.send(JSON.stringify({ type: "message" }));
+  }
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { files } = event.currentTarget;
+    if (files) {
+      setFiles(files);
+    }
+  }
+
+  function clearInput() {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      setFiles(null);
+    }
+  }
+  return (
+    <div style={{ marginTop: "2rem" }}>
+      {files && (
+        <button onClick={clearInput} className="surface">
+          delete attachments
+        </button>
+      )}
+      {files && (
+        <ul role="list" style={{ margin: "1rem 0" }}>
+          {Array.from(files).map((file) => (
+            <p key={file.lastModified}>{file.name}</p>
+          ))}
+        </ul>
+      )}
+      <Form
+        isLoading={isLoading}
+        row={true}
+        onSubmit={handleSubmit}
+        submitProps={{
+          children: <Send size={20} />,
+          style: {
+            padding: "0",
+            height: "3rem",
+            width: "3rem",
+          },
+          "aria-label": "send",
+        }}
+      >
+        {error && <p aria-live="polite">{error}</p>}
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ position: "relative", paddingRight: "1rem" }}>
+            <Paperclip />
             <InputField
-              key={messages.length}
-              label="message"
+              onChange={handleChange}
+              label="attachments"
+              type="file"
               displayLabel={false}
-              defaultValue={
-                edit
-                  ? messages.find((message) => message.id === edit)?.text
-                  : ""
-              }
-              required
-              minLength={1}
-              maxLength={255}
+              style={{ position: "absolute", inset: 0, opacity: 0 }}
+              multiple
+              ref={inputRef}
             />
           </div>
-        </Form>
-      </div>
-    </section>
+          <InputField
+            key={messages.length}
+            label="message"
+            displayLabel={false}
+            defaultValue={
+              edit ? messages.find((message) => message.id === edit)?.text : ""
+            }
+            required
+            minLength={1}
+            maxLength={255}
+          />
+        </div>
+      </Form>
+    </div>
   );
 };
 
