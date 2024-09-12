@@ -2,6 +2,7 @@ import prisma from "../configs/db.js";
 import bcrypt from "bcryptjs";
 import { ErrorWithStatus } from "../middlewares/errorHandler.js";
 import { NextFunction, Request, Response } from "express";
+import supabase from "../configs/supabase.js";
 
 export async function signupPost(
   req: Request,
@@ -22,12 +23,21 @@ export async function signupPost(
     }
 
     const hashedPassword = await bcrypt.hash(password, 5);
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         username: username,
         password: hashedPassword,
       },
     });
+
+    const { error } = await supabase.storage.createBucket(String(user.id), {
+      public: true,
+      fileSizeLimit: "1MB",
+    });
+    if (error) {
+      return next(error);
+    }
+
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
