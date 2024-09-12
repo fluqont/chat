@@ -157,6 +157,7 @@ const Messages = ({
         )}
         {error && <p>{error}</p>}
       </header>
+      {groupDeleteError && <p aria-live="polite">{groupDeleteError}</p>}
       {messages.length > 0 ? (
         messages.map((message) => (
           <Message message={message} setEdit={setEdit} key={message.id} />
