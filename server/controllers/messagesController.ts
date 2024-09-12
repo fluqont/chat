@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 import { encrypt, getMessages, Query } from "../services/messagesService.js";
 import { getFriendshipStatus } from "./usersController.js";
+import supabase from "../configs/supabase.js";
 
 export async function messagesGet(
   req: Request,
@@ -10,25 +11,33 @@ export async function messagesGet(
 ) {
   try {
     const messages = await getMessages(req.query as Query);
+
+    const { userId, partner: qPartner, partnerId } = req.query;
+
     const partner =
-      req.query.partner === "true" &&
+      qPartner === "true" &&
       (await prisma.user.findUnique({
-        where: { id: Number(req.query.partnerId) },
+        where: { id: Number(partnerId) },
       }));
+    const friendshipStatus = partner
+      ? await getFriendshipStatus(Number(userId), Number(partnerId))
+      : null;
+    const { publicUrl } = supabase.storage
+      .from(String(req.query.partnerId))
+      .getPublicUrl(String(partnerId)).data;
+
     const group =
       req.query.groupId &&
       (await prisma.group.findUnique({
         where: { id: Number(req.query.groupId) },
       }));
-    const friendshipStatus = partner
-      ? await getFriendshipStatus(
-          Number(req.query.userId),
-          Number(req.query.partnerId),
-        )
-      : null;
     res.json({
       messages: messages,
-      partner: partner && { ...partner, friendshipStatus: friendshipStatus },
+      partner: partner && {
+        ...partner,
+        friendshipStatus: friendshipStatus,
+        pfpUrl: publicUrl,
+      },
       group: group,
     });
   } catch (err) {

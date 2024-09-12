@@ -24,7 +24,7 @@ export async function userByUsernameGet(
       Number(req.user?.id),
       Number(user.id),
     );
-    const { publicUrl } = await supabase.storage
+    const { publicUrl } = supabase.storage
       .from(String(user.id))
       .getPublicUrl(String(user.id)).data;
     res.json({
