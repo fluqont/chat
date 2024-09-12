@@ -11,6 +11,7 @@ import useFetch from "../hooks/useFetch";
 export interface User {
   id: number;
   username: string;
+  pfpUrl: string;
   friendshipStatus: "friend" | "waits for your answer" | "request sent" | null;
 }
 

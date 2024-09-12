@@ -16,13 +16,6 @@
   flex-wrap: wrap;
 }
 
-.pfp {
-  width: 4rem;
-  height: 4rem;
-  object-fit: contain;
-  border-radius: var(--rounded);
-}
-
 .username {
   font-size: 1.5rem;
   font-weight: 600;

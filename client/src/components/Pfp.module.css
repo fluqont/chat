@@ -1,0 +1,4 @@
+.pfp {
+  object-fit: contain;
+  border-radius: var(--rounded);
+}

@@ -15,6 +15,7 @@ import { Edit, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
 import { Group } from "./Chats";
 import { useNavigate } from "react-router-dom";
+import Pfp from "./Pfp";
 
 interface Message {
   id: number;
@@ -135,6 +136,7 @@ const Messages = ({
   return (
     <section className={classes.messages}>
       <header className={classes.header}>
+        {partner && <Pfp url={partner.pfpUrl} />}
         <h2>
           <span>{isPartner ? partner.username : group!.name}</span>
           <small

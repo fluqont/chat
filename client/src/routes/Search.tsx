@@ -5,6 +5,7 @@ import useFetch, { UseFetch } from "../hooks/useFetch";
 import classes from "./Search.module.css";
 import { User, UserContext } from "../context/UserContext";
 import { Link } from "react-router-dom";
+import Pfp from "../components/Pfp";
 
 function Search() {
   const { data, fetchData, error, isLoading } = useFetch();
@@ -123,19 +124,11 @@ const SearchCard = ({
     );
   }
 
-  console.log(user);
-
   return (
     <>
       {error && <p style={{ marginBottom: "1rem" }}>{error}</p>}
       <div className={classes.searchCard}>
-        <img
-          src={pfpUrl}
-          width={64}
-          height={64}
-          className={classes.pfp}
-          alt="user's profile picture"
-        />
+        <Pfp url={pfpUrl} />
         <div className={classes.details}>
           <p className={classes.username}>{searchedUser.username}</p>
           <p className={classes.status}>
