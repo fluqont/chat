@@ -52,10 +52,47 @@ function User() {
     }
   }, [data]);
 
+  const {
+    data: uploadData,
+    fetchData: fetchUpload,
+    isLoading: isUploading,
+    error: uploadError,
+  } = useFetch();
+
+  function handleFileSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (user) {
+      const formData = new FormData(event.currentTarget);
+
+      fetchUpload(`/users/${user.id}/upload`, {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
+    }
+  }
+
   return (
     <>
       <section className="centered-section">
         <h2>Change user</h2>
+        <Form
+          onSubmit={handleFileSubmit}
+          method="post"
+          encType="multipart/form-data"
+          isLoading={false}
+          row={true}
+          style={{ marginBottom: "1rem" }}
+        >
+          <InputField
+            label="Profile picture"
+            id="profile-picture"
+            type="file"
+            accept="image/*"
+            required
+          />
+        </Form>
         <Form onSubmit={handleSubmit} isLoading={isLoading}>
           {error && <p aria-live="polite">{error}</p>}
           <InputField

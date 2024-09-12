@@ -24,3 +24,7 @@ textarea.input {
   font-size: 1.25rem;
   padding: 1rem 2rem;
 }
+
+.input[type="file"] {
+  font-size: 1.25rem;
+}
