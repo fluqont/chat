@@ -53,7 +53,6 @@ function User() {
   }, [data]);
 
   const {
-    data: uploadData,
     fetchData: fetchUpload,
     isLoading: isUploading,
     error: uploadError,
@@ -81,10 +80,12 @@ function User() {
           onSubmit={handleFileSubmit}
           method="post"
           encType="multipart/form-data"
-          isLoading={false}
+          isLoading={isUploading}
           row={true}
           style={{ marginBottom: "1rem" }}
         >
+          <small>limit is 1mb</small>
+          {uploadError && <p aria-live="polite">{uploadError}</p>}
           <InputField
             label="Profile picture"
             id="profile-picture"
