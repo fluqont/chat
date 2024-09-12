@@ -1,9 +1,11 @@
 import {
+  ChangeEvent,
   Dispatch,
   FormEvent,
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { User, UserContext } from "../context/UserContext";
@@ -11,7 +13,7 @@ import Form from "./Form";
 import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
-import { Edit, Send, Trash } from "lucide-react";
+import { Edit, Paperclip, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
 import { Group } from "./Chats";
 import { useNavigate } from "react-router-dom";
@@ -133,6 +135,24 @@ const Messages = ({
     }
   }, [data]);
 
+  const [files, setFiles] = useState<FileList | null>(null);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    const { files } = event.currentTarget;
+    if (files) {
+      setFiles(files);
+    }
+  }
+
+  function clearInput() {
+    if (inputRef.current) {
+      inputRef.current.value = "";
+      setFiles(null);
+    }
+  }
+
   return (
     <section className={classes.messages}>
       <header className={classes.header}>
@@ -169,34 +189,63 @@ const Messages = ({
       ) : (
         <p>no messages yet</p>
       )}
-      <Form
-        isLoading={isLoading}
-        row={true}
-        onSubmit={handleSubmit}
-        style={{ marginTop: "2rem" }}
-        submitProps={{
-          children: <Send size={20} />,
-          style: {
-            padding: "0",
-            height: "3rem",
-            width: "3rem",
-          },
-          "aria-label": "send",
-        }}
-      >
-        {error && <p aria-live="polite">{error}</p>}
-        <InputField
-          key={messages.length}
-          label="message"
-          displayLabel={false}
-          defaultValue={
-            edit ? messages.find((message) => message.id === edit)?.text : ""
-          }
-          required
-          minLength={1}
-          maxLength={255}
-        />
-      </Form>
+      <div style={{ marginTop: "2rem" }}>
+        {files && (
+          <button onClick={clearInput} className="surface">
+            delete attachments
+          </button>
+        )}
+        {files && (
+          <ul role="list" style={{ margin: "1rem 0" }}>
+            {Array.from(files).map((file) => (
+              <p key={file.lastModified}>{file.name}</p>
+            ))}
+          </ul>
+        )}
+        <Form
+          isLoading={isLoading}
+          row={true}
+          onSubmit={handleSubmit}
+          submitProps={{
+            children: <Send size={20} />,
+            style: {
+              padding: "0",
+              height: "3rem",
+              width: "3rem",
+            },
+            "aria-label": "send",
+          }}
+        >
+          {error && <p aria-live="polite">{error}</p>}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ position: "relative", paddingRight: "1rem" }}>
+              <Paperclip />
+              <InputField
+                onChange={handleChange}
+                label="attachments"
+                type="file"
+                displayLabel={false}
+                style={{ position: "absolute", inset: 0, opacity: 0 }}
+                multiple
+                ref={inputRef}
+              />
+            </div>
+            <InputField
+              key={messages.length}
+              label="message"
+              displayLabel={false}
+              defaultValue={
+                edit
+                  ? messages.find((message) => message.id === edit)?.text
+                  : ""
+              }
+              required
+              minLength={1}
+              maxLength={255}
+            />
+          </div>
+        </Form>
+      </div>
     </section>
   );
 };

@@ -45,6 +45,7 @@ export default function MessagesWithChats() {
   const partnerId = searchParams.get("partner-id");
   const groupId = searchParams.get("group-id");
   const id = partnerId ?? groupId;
+
   useEffect(() => {
     if (user && partnerId) {
       messagesFetch(partnerId, false);
