@@ -138,6 +138,16 @@ export async function userUsernamePatch(
   }
 }
 
+export async function userProfilePicturePatch(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { userId } = req.params;
+  const body = req.body;
+  console.log(userId, body);
+}
+
 export async function userDelete(
   req: Request,
   res: Response,
