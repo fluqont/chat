@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
 import { getMessages } from "../services/messagesService.js";
+import { decode } from "base64-arraybuffer";
+import supabase from "../configs/supabase.js";
+import { ErrorWithStatus } from "../middlewares/errorHandler.js";
 
 export async function userByUsernameGet(
   req: Request,
@@ -143,9 +146,26 @@ export async function userProfilePicturePatch(
   res: Response,
   next: NextFunction,
 ) {
+  if (!req.file) {
+    return next(new ErrorWithStatus("File was not uploaded", 400));
+  }
+
   const { userId } = req.params;
-  const body = req.body;
-  console.log(userId, body);
+  const { buffer } = req.file;
+
+  const fileBase64 = decode(buffer.toString("base64"));
+  try {
+    const { error } = await supabase.storage
+      .from(userId)
+      .upload(userId, fileBase64, { upsert: true });
+    if (error) {
+      return next(error);
+    }
+
+    res.json({ message: "OK" });
+  } catch (err) {
+    next(err);
+  }
 }
 
 export async function userDelete(
