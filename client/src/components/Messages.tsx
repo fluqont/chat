@@ -25,6 +25,7 @@ interface Message {
   text: string;
   createdAt: string;
   updatedAt: string;
+  attachmentUrls: string[];
 }
 
 interface MessagesProps {
@@ -40,6 +41,7 @@ const Messages = ({
   messages,
   fetchMessages,
 }: MessagesProps) => {
+  console.log(messages);
   const navigate = useNavigate();
 
   const { user } = useContext(UserContext);
@@ -211,22 +213,29 @@ const NewMessage = ({
   useEffect(() => {
     if (data) {
       const attachments = inputRef.current?.files;
-      if (!attachments || attachments.length === 0) return;
-
-      const formData = new FormData();
-      Array.from(attachments).forEach((file, index) => {
-        formData.append(`file${index}`, file);
-      });
-      fetchAttachments(`/messages/${data.message.id}/attachments`, {
-        body: formData,
-        credentials: "include",
-      }).then(() =>
-        isPartner
-          ? fetchMessages(String(partner!.id), false)
-          : fetchMessages(String(group!.id), true),
-      );
+      if (attachments && attachments.length > 0) {
+        const formData = new FormData();
+        Array.from(attachments).forEach((file, index) => {
+          formData.append(`file${index}`, file);
+        });
+        fetchAttachments(`/messages/${data.message.id}/attachments`, {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        }).then(() => {
+          fetchMessageByPartner();
+        });
+      } else {
+        fetchMessageByPartner();
+      }
     }
   }, [data]);
+
+  function fetchMessageByPartner() {
+    isPartner
+      ? fetchMessages(String(partner!.id), false)
+      : fetchMessages(String(group!.id), true);
+  }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { files } = event.currentTarget;
@@ -361,6 +370,15 @@ const Message = ({ message, setEdit }: MessageProps) => {
           </nav>
         )}
       </div>
+      {message.attachmentUrls.length > 0 && (
+        <ul role="list">
+          {message.attachmentUrls.map((url, i) => (
+            <li>
+              <a href={url}>attachment {i}</a>
+            </li>
+          ))}
+        </ul>
+      )}
       <p className={classes.time}>
         <time dateTime={message.createdAt}>{createdAt}</time>
       </p>

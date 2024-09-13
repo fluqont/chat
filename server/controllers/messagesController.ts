@@ -54,7 +54,7 @@ export async function messagePost(
 ) {
   const { senderId, recipientId, groupId, text } = req.body;
   try {
-    await prisma.message.create({
+    const message = await prisma.message.create({
       data: {
         text: encrypt(text),
         senderId: Number(senderId),
@@ -62,7 +62,7 @@ export async function messagePost(
         groupId: Number(groupId) || undefined,
       },
     });
-    res.json({ message: "OK" });
+    res.json({ message: message });
   } catch (err) {
     next(err);
   }
@@ -82,6 +82,10 @@ export async function attachmentsPost(
 
   const fileBase64 = decode(buffer.toString("base64"));
   try {
+    const attachment = await prisma.attachment.create({
+      data: { messageId: Number(messageId) },
+    });
+
     const bucket = `${messageId}-message`;
 
     const { error: bucketError } = await supabase.storage.createBucket(
@@ -97,16 +101,12 @@ export async function attachmentsPost(
 
     const { error } = await supabase.storage
       .from(bucket)
-      .upload(messageId, fileBase64, { upsert: true });
+      .upload(String(attachment.id), fileBase64, { upsert: true });
     if (error) {
       return next(error);
     }
 
-    const { publicUrl } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(messageId).data;
-
-    res.json({ attachmentUrls: [publicUrl] });
+    res.json({ message: "OK" });
   } catch (err) {
     next(err);
   }

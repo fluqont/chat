@@ -1,4 +1,5 @@
 import prisma from "../configs/db.js";
+import supabase from "../configs/supabase.js";
 
 export function encrypt(text: string): string {
   return Buffer.from(text).toString("base64");
@@ -16,12 +17,6 @@ export async function getMessages({
   limit,
   offset,
 }: Query) {
-  groupId &&
-    console.log(
-      await prisma.message.findMany({
-        where: { groupId: Number(groupId) || undefined },
-      }),
-    );
   const messages = await prisma.message.findMany({
     where: {
       OR: !groupId
@@ -41,9 +36,21 @@ export async function getMessages({
     orderBy: { createdAt: "asc" },
     take: Number(limit) || undefined,
     skip: Number(offset) || 0,
+    include: { attachments: true },
   });
   const decryptedMessages = messages.map((message) => {
-    return { ...message, text: decrypt(message.text) };
+    const attachmentUrls = message.attachments.map(
+      (attachment) =>
+        supabase.storage
+          .from(`${message.id}-message`)
+          .getPublicUrl(String(attachment.id), { download: true }).data
+          .publicUrl,
+    );
+    return {
+      ...message,
+      text: decrypt(message.text),
+      attachmentUrls: attachmentUrls,
+    };
   });
   return decryptedMessages;
 }
