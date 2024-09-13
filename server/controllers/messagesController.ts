@@ -78,12 +78,12 @@ export async function attachmentsPost(
   }
 
   const { messageId } = req.params;
-  const { buffer } = req.file;
+  const { originalname, buffer } = req.file;
 
   const fileBase64 = decode(buffer.toString("base64"));
   try {
     const attachment = await prisma.attachment.create({
-      data: { messageId: Number(messageId) },
+      data: { messageId: Number(messageId), fileName: originalname },
     });
 
     const bucket = `${messageId}-message`;

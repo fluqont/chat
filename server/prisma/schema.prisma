@@ -73,6 +73,7 @@ model Message {
 
 model Attachment {
   id        Int     @id @default(autoincrement())
+  fileName  String  @db.VarChar(255)
   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
   messageId Int
 }
