@@ -178,7 +178,7 @@ const NewMessage = ({
 }: NewMessageProps) => {
   const [files, setFiles] = useState<FileList | null>(null);
 
-  const { fetchData, error, isLoading } = useFetch();
+  const { data, fetchData, error } = useFetch();
 
   const { user } = useContext(UserContext);
 
@@ -194,22 +194,39 @@ const NewMessage = ({
       headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
         text: data.get("message"),
-        attachments: inputRef.current?.files,
         senderId: user?.id,
         recipientId: isPartner ? partner!.id : null,
         groupId: !isPartner ? group!.id : null,
       }),
       credentials: "include",
-    }).then(() =>
-      isPartner
-        ? fetchMessages(String(partner!.id), false)
-        : fetchMessages(String(group!.id), true),
-    );
+    });
 
     setEdit(false);
 
     ws && ws.send(JSON.stringify({ type: "message" }));
   }
+
+  const { fetchData: fetchAttachments, isLoading } = useFetch();
+
+  useEffect(() => {
+    if (data) {
+      const attachments = inputRef.current?.files;
+      if (!attachments || attachments.length === 0) return;
+
+      const formData = new FormData();
+      Array.from(attachments).forEach((file, index) => {
+        formData.append(`file${index}`, file);
+      });
+      fetchAttachments(`/messages/${data.message.id}/attachments`, {
+        body: formData,
+        credentials: "include",
+      }).then(() =>
+        isPartner
+          ? fetchMessages(String(partner!.id), false)
+          : fetchMessages(String(group!.id), true),
+      );
+    }
+  }, [data]);
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const { files } = event.currentTarget;

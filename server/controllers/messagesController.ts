@@ -3,6 +3,8 @@ import prisma from "../configs/db.js";
 import { encrypt, getMessages, Query } from "../services/messagesService.js";
 import { getFriendshipStatus } from "./usersController.js";
 import supabase from "../configs/supabase.js";
+import { ErrorWithStatus } from "../middlewares/errorHandler.js";
+import { decode } from "base64-arraybuffer";
 
 export async function messagesGet(
   req: Request,
@@ -61,6 +63,50 @@ export async function messagePost(
       },
     });
     res.json({ message: "OK" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function attachmentsPost(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  if (!req.file) {
+    return next(new ErrorWithStatus("File was not uploaded", 400));
+  }
+
+  const { messageId } = req.params;
+  const { buffer } = req.file;
+
+  const fileBase64 = decode(buffer.toString("base64"));
+  try {
+    const bucket = `${messageId}-message`;
+
+    const { error: bucketError } = await supabase.storage.createBucket(
+      String(bucket),
+      {
+        public: true,
+        fileSizeLimit: "1MB",
+      },
+    );
+    if (bucketError) {
+      return next(bucketError);
+    }
+
+    const { error } = await supabase.storage
+      .from(bucket)
+      .upload(messageId, fileBase64, { upsert: true });
+    if (error) {
+      return next(error);
+    }
+
+    const { publicUrl } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(messageId).data;
+
+    res.json({ attachmentUrls: [publicUrl] });
   } catch (err) {
     next(err);
   }

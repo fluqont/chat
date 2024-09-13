@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  attachmentsPost,
   messageDelete,
   messagePost,
   messagePut,
@@ -14,6 +15,7 @@ const router = Router();
 
 router.get("/", isUserByIdOrInGroup, messagesGet);
 router.post("/", isSender, messagePost);
+router.post("/:messageId/attachments", isMessageOwner, attachmentsPost);
 router.put("/:messageId", isMessageOwner, messagePut);
 router.delete("/:messageId", isMessageOwner, messageDelete);
 
