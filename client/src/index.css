@@ -99,6 +99,10 @@ a:hover {
   background-color: var(--surface);
   color: var(--on-surface);
 }
+.surface-high {
+  background-color: var(--surface-high);
+  color: var(--on-surface);
+}
 .primary,
 input[type="file"]::file-selector-button {
   background-color: var(--primary);

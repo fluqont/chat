@@ -1,7 +1,8 @@
 import { Link, SetURLSearchParams } from "react-router-dom";
 import { User } from "../context/UserContext";
 import classes from "./Chats.module.css";
-import { Plus } from "lucide-react";
+import { Menu, Plus, X } from "lucide-react";
+import { useState } from "react";
 
 export interface Group {
   id: number;
@@ -21,8 +22,21 @@ interface ChatsProps {
 }
 
 const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
+  const [checked, setChecked] = useState(false);
   return (
-    <>
+    <div className={classes.wrapper}>
+      <label htmlFor="menu" className={classes.menuLabel}>
+        menu
+      </label>
+      <div className={classes.icon}>{checked ? <X /> : <Menu />}</div>
+      <input
+        checked={checked}
+        onChange={(e) => setChecked(e.target.checked)}
+        type="checkbox"
+        name="menu"
+        id="menu"
+        className={classes.menu}
+      />
       <nav className={classes.chats}>
         <Link
           to="/new-group"
@@ -63,7 +77,7 @@ const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
           </>
         )}
       </nav>
-    </>
+    </div>
   );
 };
 
@@ -87,7 +101,9 @@ const Chat = ({
       onClick={() => setSearchParams({ [searchParam]: String(id) })}
       className={[
         classes.chat,
-        Number(searchParams.get(searchParam)) === id ? "primary" : "surface",
+        Number(searchParams.get(searchParam)) === id
+          ? "primary"
+          : "surface-high",
       ].join(" ")}
     >
       {label}

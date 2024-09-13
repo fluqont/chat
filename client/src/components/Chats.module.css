@@ -1,3 +1,19 @@
+.wrapper {
+  position: relative;
+}
+
+.menu-label {
+  visibility: hidden;
+}
+
+.icon {
+  display: none;
+}
+
+.menu {
+  display: none;
+}
+
 .chats {
   display: grid;
   gap: 0.5rem;
@@ -14,4 +30,30 @@
 .group {
   margin-bottom: 1rem;
   gap: 0.25rem;
+}
+
+@media (max-width: 1000px) {
+  .menu {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    opacity: 0;
+  }
+  .icon {
+    display: block;
+  }
+  .chats {
+    padding: 1rem;
+    position: fixed;
+    z-index: 1;
+    inset: 10rem 0 0 0;
+    background-color: var(--surface);
+
+    transform: translateX(-100%);
+    transition: transform 300ms ease-in-out;
+  }
+  .menu:checked + .chats {
+    transform: translateX(0%);
+  }
 }
