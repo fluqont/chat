@@ -41,7 +41,6 @@ const Messages = ({
   messages,
   fetchMessages,
 }: MessagesProps) => {
-  console.log(messages);
   const navigate = useNavigate();
 
   const { user } = useContext(UserContext);

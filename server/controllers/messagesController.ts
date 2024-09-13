@@ -79,9 +79,7 @@ export async function attachmentsPost(
 
   const { messageId } = req.params;
 
-  console.log(req.files.length);
   for (const { originalname, buffer } of req.files) {
-    console.log({ originalname });
     const fileBase64 = decode(buffer.toString("base64"));
     try {
       const attachment = await prisma.attachment.create({

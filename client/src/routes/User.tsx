@@ -146,10 +146,6 @@ const GroupRequests = () => {
     fetchRequests();
   }, [user]);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   if (isLoading) return <p>loading...</p>;
 
   return (
