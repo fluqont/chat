@@ -3,7 +3,7 @@
 }
 
 .menu-label {
-  visibility: hidden;
+  opacity: 0;
 }
 
 .icon {
