@@ -19,7 +19,7 @@ app.use(
     saveUninitialized: false,
     resave: false,
     store: prismaStore,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 2 },
+    cookie: { maxAge: 1000 * 60 * 60 * 24 * 2, sameSite: "none" },
   }),
 );
 app.use(passport.session());
