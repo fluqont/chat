@@ -21,8 +21,8 @@ app.use(
     store: prismaStore,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 2,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      secure: true,
     },
   }),
 );
