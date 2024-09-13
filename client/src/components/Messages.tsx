@@ -194,7 +194,7 @@ const NewMessage = ({
       headers: { "Content-Type": "application/json; charset=UTF-8" },
       body: JSON.stringify({
         text: data.get("message"),
-        attachmentIds: [],
+        attachments: inputRef.current?.files,
         senderId: user?.id,
         recipientId: isPartner ? partner!.id : null,
         groupId: !isPartner ? group!.id : null,
