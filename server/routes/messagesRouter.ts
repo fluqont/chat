@@ -19,7 +19,7 @@ router.post("/", isSender, messagePost);
 router.post(
   "/:messageId/attachments",
   isMessageOwner,
-  upload.single("file0"),
+  upload.any(),
   attachmentsPost,
 );
 router.put("/:messageId", isMessageOwner, messagePut);

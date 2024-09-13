@@ -73,43 +73,49 @@ export async function attachmentsPost(
   res: Response,
   next: NextFunction,
 ) {
-  if (!req.file) {
+  if (!req.files || !Array.isArray(req.files)) {
     return next(new ErrorWithStatus("File was not uploaded", 400));
   }
 
   const { messageId } = req.params;
-  const { originalname, buffer } = req.file;
 
-  const fileBase64 = decode(buffer.toString("base64"));
-  try {
-    const attachment = await prisma.attachment.create({
-      data: { messageId: Number(messageId), fileName: originalname },
-    });
+  console.log(req.files.length);
+  for (const { originalname, buffer } of req.files) {
+    console.log({ originalname });
+    const fileBase64 = decode(buffer.toString("base64"));
+    try {
+      const attachment = await prisma.attachment.create({
+        data: { messageId: Number(messageId), fileName: originalname },
+      });
 
-    const bucket = `${messageId}-message`;
+      const bucket = `${messageId}-message`;
 
-    const { error: bucketError } = await supabase.storage.createBucket(
-      String(bucket),
-      {
-        public: true,
-        fileSizeLimit: "1MB",
-      },
-    );
-    if (bucketError) {
-      return next(bucketError);
+      const { data } = await supabase.storage.getBucket(String(bucket));
+      if (!data) {
+        const { error: bucketError } = await supabase.storage.createBucket(
+          String(bucket),
+          {
+            public: true,
+            fileSizeLimit: "1MB",
+          },
+        );
+        if (bucketError) {
+          return next(bucketError);
+        }
+      }
+
+      const { error } = await supabase.storage
+        .from(bucket)
+        .upload(String(attachment.id), fileBase64, { upsert: true });
+      if (error) {
+        return next(error);
+      }
+    } catch (err) {
+      next(err);
     }
-
-    const { error } = await supabase.storage
-      .from(bucket)
-      .upload(String(attachment.id), fileBase64, { upsert: true });
-    if (error) {
-      return next(error);
-    }
-
-    res.json({ message: "OK" });
-  } catch (err) {
-    next(err);
   }
+
+  res.json({ message: "OK" });
 }
 
 export async function messagePut(

@@ -373,7 +373,7 @@ const Message = ({ message, setEdit }: MessageProps) => {
       {message.attachmentUrls.length > 0 && (
         <ul role="list">
           {message.attachmentUrls.map((url, i) => (
-            <li>
+            <li key={url}>
               <a href={url}>attachment {i}</a>
             </li>
           ))}
