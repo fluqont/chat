@@ -27,10 +27,14 @@ export async function userByUsernameGet(
     const { publicUrl } = supabase.storage
       .from(String(user.id))
       .getPublicUrl(String(user.id)).data;
+    const response = await fetch(publicUrl);
+
     res.json({
       user: user,
       friendshipStatus: friendshipStatus,
-      pfpUrl: publicUrl,
+      pfpUrl: response.ok
+        ? publicUrl
+        : process.env.CLIENT_URL + "/placeholder.svg",
     });
   } catch (err) {
     next(err);
