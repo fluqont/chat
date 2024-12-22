@@ -7,7 +7,6 @@ import errorHandler from "./middlewares/errorHandler.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 import passport, { prismaStore } from "./configs/auth.js";
 import { Server } from "socket.io";
-import { updateStatus } from "./services/usersService.js";
 import { createServer } from "http";
 
 const app = express();
@@ -45,20 +44,4 @@ export const io = new Server(http, {
   cors: {
     origin: process.env.CLIENT_URL,
   },
-});
-io.on("connection", async (socket) => {
-  io.to(`/users/${socket.handshake.auth.token}`).emit("status", "ONLINE");
-  await updateStatus(socket.handshake.auth.token, "ONLINE");
-
-  socket.on("disconnect", async () => {
-    io.to(`/users/${socket.handshake.auth.token}`).emit("status", "OFFLINE");
-    await updateStatus(socket.handshake.auth.token, "OFFLINE");
-  });
-
-  socket.on("/users", async (senderId) => {
-    await socket.join(`/users/${senderId}`);
-  });
-  socket.on("/groups", async (groupId) => {
-    await socket.join(`/groups/${groupId}`);
-  });
 });
