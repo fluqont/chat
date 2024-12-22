@@ -43,7 +43,7 @@ const Messages = ({
 }: MessagesProps) => {
   const navigate = useNavigate();
 
-  const { user } = useContext(UserContext);
+  const { user, socket } = useContext(UserContext);
 
   const [edit, setEdit] = useState<false | number>(false);
 
@@ -51,42 +51,30 @@ const Messages = ({
   const isFriend = isPartner ? partner.friendshipStatus === "friend" : false;
   const [status, setStatus] = useState(isFriend ? "OFFLINE" : null);
 
-  const [ws, setWs] = useState<null | WebSocket>(null);
   useEffect(() => {
-    if (user) {
-      const ws = new WebSocket(
-        `${import.meta.env.VITE_WS_URL}?userId=${user.id}&${partner ? "partnerId=" + partner.id : "groupId" + group!.id}`,
-      );
-      ws.onopen = () => {
-        ws.send(JSON.stringify({ type: "get-status" }));
-      };
-
-      ws.onmessage = async ({ data }) => {
-        switch (data) {
-          case "message": {
-            setTimeout(() => {
-              if (isPartner) {
-                fetchMessages(String(partner.id), false);
-              } else {
-                fetchMessages(String(group!.id), true);
-              }
-            }, 1000);
-            break;
-          }
-          default: {
-            if (!isFriend) return;
-
-            setStatus(data);
-            break;
-          }
-        }
-      };
-
-      setWs(ws);
-
-      return () => ws.close();
+    if (partner) {
+      setStatus(partner.status);
     }
-  }, []);
+  }, [partner?.status]);
+
+  useEffect(() => {
+    if (socket) {
+      if (isPartner) {
+        socket.emit("/users", partner.id);
+      } else {
+        socket.emit("/groups", group!.id);
+      }
+
+      if (isPartner) {
+        socket.on("status", (status) => setStatus(status));
+        socket.on("message", () => {
+          fetchMessages(String(partner.id), false);
+        });
+      } else {
+        socket.on("message", () => fetchMessages(String(group!.id), true));
+      }
+    }
+  }, [socket]);
 
   const {
     data,
@@ -150,7 +138,6 @@ const Messages = ({
         messages={messages}
         partner={partner}
         setEdit={setEdit}
-        ws={ws}
       />
     </section>
   );
@@ -164,7 +151,6 @@ interface NewMessageProps {
   partner?: User;
   group?: Group;
   messages: Message[];
-  ws: WebSocket | null;
 }
 
 const NewMessage = ({
@@ -175,7 +161,6 @@ const NewMessage = ({
   partner,
   group,
   messages,
-  ws,
 }: NewMessageProps) => {
   const [files, setFiles] = useState<FileList | null>(null);
 
@@ -203,8 +188,6 @@ const NewMessage = ({
     });
 
     setEdit(false);
-
-    ws && ws.send(JSON.stringify({ type: "message" }));
   }
 
   const { fetchData: fetchAttachments, isLoading } = useFetch();
