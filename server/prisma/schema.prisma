@@ -7,10 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  ONLINE
+  OFFLINE
+}
+
 model User {
   id             Int             @id @default(autoincrement())
   username       String          @unique @db.VarChar(30)
   password       String          @db.VarChar(255)
+  status         Status          @default(ONLINE)
   requests       FriendRequest[] @relation("Requests")
   requested      FriendRequest[] @relation("Requested")
   groups         Group[]         @relation("Groups")
