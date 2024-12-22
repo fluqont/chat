@@ -9,6 +9,23 @@ export function decrypt(text: string): string {
   return Buffer.from(text, "base64").toString();
 }
 
+export async function postMessage(
+  text: string,
+  senderId: string,
+  recipientId?: string,
+  groupId?: string,
+) {
+  const message = await prisma.message.create({
+    data: {
+      text: encrypt(text),
+      senderId: Number(senderId),
+      recipientId: Number(recipientId) || undefined,
+      groupId: Number(groupId) || undefined,
+    },
+  });
+  return message;
+}
+
 export type Query = Record<string, string | null>;
 export async function getMessages({
   userId,

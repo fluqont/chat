@@ -1,10 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../configs/db.js";
-import { encrypt, getMessages, Query } from "../services/messagesService.js";
+import {
+  encrypt,
+  getMessages,
+  postMessage,
+  Query,
+} from "../services/messagesService.js";
 import { getFriendshipStatus } from "./usersController.js";
 import supabase from "../configs/supabase.js";
 import { ErrorWithStatus } from "../middlewares/errorHandler.js";
 import { decode } from "base64-arraybuffer";
+import { io } from "../app.js";
 
 export async function messagesGet(
   req: Request,
@@ -54,14 +60,14 @@ export async function messagePost(
 ) {
   const { senderId, recipientId, groupId, text } = req.body;
   try {
-    const message = await prisma.message.create({
-      data: {
-        text: encrypt(text),
-        senderId: Number(senderId),
-        recipientId: Number(recipientId) || undefined,
-        groupId: Number(groupId) || undefined,
-      },
-    });
+    const message = await postMessage(text, senderId, recipientId, groupId);
+
+    if (message.groupId) {
+      io.to(`/groups/${message.groupId}`).emit("message", message);
+    } else {
+      io.to(`/users/${message.senderId}`).emit("message", message);
+    }
+
     res.json({ message: message });
   } catch (err) {
     next(err);
@@ -124,12 +130,19 @@ export async function messagePut(
   const { messageId } = req.params;
   const { text } = req.body;
   try {
-    await prisma.message.update({
+    const message = await prisma.message.update({
       data: {
         text: encrypt(text),
       },
       where: { id: Number(messageId) },
     });
+
+    if (message.groupId) {
+      io.to(`/groups/${message.groupId}`).emit("message", message);
+    } else {
+      io.to(`/users/${message.senderId}`).emit("message", message);
+    }
+
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
@@ -143,7 +156,16 @@ export async function messageDelete(
 ) {
   const { messageId } = req.params;
   try {
-    await prisma.message.delete({ where: { id: Number(messageId) } });
+    const message = await prisma.message.delete({
+      where: { id: Number(messageId) },
+    });
+
+    if (message.groupId) {
+      io.to(`/groups/${message.groupId}`).emit("message", message);
+    } else {
+      io.to(`/users/${message.senderId}`).emit("message", message);
+    }
+
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
