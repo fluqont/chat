@@ -31,8 +31,10 @@ export async function messagesGet(
       ? await getFriendshipStatus(Number(userId), Number(partnerId))
       : null;
     const { publicUrl } = supabase.storage
-      .from(String(req.query.partnerId))
-      .getPublicUrl(String(partnerId)).data;
+      .from("pfp")
+      .getPublicUrl(
+        `${partner && partner.id}.${partner && partner.pfpFileExtension}`,
+      ).data;
 
     const group =
       req.query.groupId &&

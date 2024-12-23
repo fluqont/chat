@@ -25,8 +25,8 @@ export async function userByUsernameGet(
       Number(user.id),
     );
     const { publicUrl } = supabase.storage
-      .from(String(user.id))
-      .getPublicUrl(String(user.id)).data;
+      .from("pfp")
+      .getPublicUrl(`${user.id}.${user.pfpFileExtension}`).data;
     const response = await fetch(publicUrl);
 
     res.json({
@@ -167,16 +167,25 @@ export async function userProfilePicturePatch(
   }
 
   const { userId } = req.params;
-  const { buffer } = req.file;
+  const { buffer, originalname, mimetype } = req.file;
 
+  const fileExtension = originalname.split(".").at(-1);
   const fileBase64 = decode(buffer.toString("base64"));
   try {
     const { error } = await supabase.storage
-      .from(userId)
-      .upload(userId, fileBase64, { upsert: true });
+      .from("pfp")
+      .upload(`${userId}.${fileExtension}`, fileBase64, {
+        upsert: true,
+        contentType: mimetype,
+      });
     if (error) {
       return next(error);
     }
+
+    await prisma.user.update({
+      where: { id: Number(userId) },
+      data: { pfpFileExtension: fileExtension },
+    });
 
     res.json({ message: "OK" });
   } catch (err) {
@@ -191,7 +200,7 @@ export async function userDelete(
 ) {
   const { userId } = req.params;
   try {
-    await prisma.user.delete({ where: { id: Number(userId) } });
+    const user = await prisma.user.delete({ where: { id: Number(userId) } });
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
