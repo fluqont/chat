@@ -13,17 +13,18 @@ enum Status {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  username       String          @unique @db.VarChar(30)
-  password       String          @db.VarChar(255)
-  status         Status          @default(ONLINE)
-  requests       FriendRequest[] @relation("Requests")
-  requested      FriendRequest[] @relation("Requested")
-  groups         Group[]         @relation("Groups")
-  createdGroups  Group[]         @relation("CreatedGroups")
-  groupRequests  GroupRequest[]
-  messages       Message[]       @relation("Messages")
-  gottenMessages Message[]       @relation("GottenMessages")
+  id               Int             @id @default(autoincrement())
+  username         String          @unique @db.VarChar(30)
+  password         String          @db.VarChar(255)
+  pfpFileExtension String?         @db.VarChar(5)
+  status           Status          @default(ONLINE)
+  requests         FriendRequest[] @relation("Requests")
+  requested        FriendRequest[] @relation("Requested")
+  groups           Group[]         @relation("Groups")
+  createdGroups    Group[]         @relation("CreatedGroups")
+  groupRequests    GroupRequest[]
+  messages         Message[]       @relation("Messages")
+  gottenMessages   Message[]       @relation("GottenMessages")
 }
 
 model Session {
