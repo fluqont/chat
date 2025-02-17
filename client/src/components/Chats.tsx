@@ -56,6 +56,7 @@ const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
               searchParams={searchParams}
               setSearchParams={setSearchParams}
               searchParam="partner-id"
+              pfpUrl={user.pfpUrl}
             />
           ))
         ) : (
@@ -87,6 +88,7 @@ interface Chat {
   searchParams: URLSearchParams;
   setSearchParams: SetURLSearchParams;
   searchParam: string;
+  pfpUrl?: string;
 }
 
 const Chat = ({
@@ -95,6 +97,7 @@ const Chat = ({
   searchParams,
   setSearchParams,
   searchParam,
+  pfpUrl,
 }: Chat) => {
   return (
     <button
@@ -106,6 +109,15 @@ const Chat = ({
           : "surface-high",
       ].join(" ")}
     >
+      {pfpUrl && (
+        <img
+          src={pfpUrl}
+          width={24}
+          height={24}
+          className={classes.pfp}
+          alt="user's profile picture"
+        />
+      )}
       {label}
     </button>
   );

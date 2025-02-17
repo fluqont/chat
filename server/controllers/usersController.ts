@@ -109,10 +109,16 @@ export async function chatsGet(
     const users = await prisma.user.findMany({
       where: { id: { in: uniqueUserIds } },
     });
+    const usersWithPfpUrls = users.map((user) => {
+      const { publicUrl } = supabase.storage
+        .from("pfp")
+        .getPublicUrl(`${user.id}.${user.pfpFileExtension}`).data;
+      return { ...user, pfpUrl: publicUrl };
+    });
     const groups = await prisma.group.findMany({
       where: { id: { in: uniqueGroupIds } },
     });
-    res.json({ users: users, groups: groups });
+    res.json({ users: usersWithPfpUrls, groups: groups });
   } catch (err) {
     next(err);
   }
