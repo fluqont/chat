@@ -39,7 +39,7 @@ Images - [Supabase](https://supabase.com)
 1.
 
 ```bash
-git clone git@github.com:sinskiy/chat.git
+git clone git@github.com:fluqont/chat.git
 cd chat
 cd client && npm install
 cd ../server && npm install
