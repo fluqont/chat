@@ -188,6 +188,7 @@ const NewMessage = ({
     });
 
     setEdit(false);
+    setFiles(null);
   }
 
   const { fetchData: fetchAttachments, isLoading } = useFetch();
