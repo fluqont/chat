@@ -201,6 +201,13 @@ export async function userDelete(
   const { userId } = req.params;
   try {
     const user = await prisma.user.delete({ where: { id: Number(userId) } });
+    const { error } = await supabase.storage
+      .from("pfp")
+      .remove([`${userId}.${user.pfpFileExtension}`]);
+    if (error) {
+      return next(error);
+    }
+
     res.json({ message: "OK" });
   } catch (err) {
     next(err);
