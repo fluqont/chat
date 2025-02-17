@@ -20,7 +20,7 @@ export async function messagesGet(
   try {
     const messages = await getMessages(req.query as Query);
 
-    const { userId, partner: qPartner, partnerId } = req.query;
+    const { userId, partner: qPartner, partnerId, groupId } = req.query;
 
     const partner =
       qPartner === "true" &&
@@ -30,18 +30,22 @@ export async function messagesGet(
     const friendshipStatus = partner
       ? await getFriendshipStatus(Number(userId), Number(partnerId))
       : null;
+
+    const group =
+      groupId &&
+      (await prisma.group.findUnique({
+        where: { id: Number(groupId) },
+      }));
+
     const { publicUrl } = supabase.storage
-      .from("pfp")
+      .from(groupId ? "groups-pfp" : "pfp")
       .getPublicUrl(
-        `${partner && partner.id}.${partner && partner.pfpFileExtension}`,
+        groupId
+          ? `${group && group.id}.${group && group.pfpFileExtension}`
+          : `${partner && partner.id}.${partner && partner.pfpFileExtension}`,
       ).data;
     const response = await fetch(publicUrl);
 
-    const group =
-      req.query.groupId &&
-      (await prisma.group.findUnique({
-        where: { id: Number(req.query.groupId) },
-      }));
     res.json({
       messages: messages,
       partner: partner && {
@@ -51,7 +55,10 @@ export async function messagesGet(
           ? publicUrl
           : process.env.CLIENT_URL + "/placeholder.svg",
       },
-      group: group,
+      group: group && {
+        ...group,
+        pfpUrl: response.ok ? publicUrl : undefined,
+      },
     });
   } catch (err) {
     next(err);

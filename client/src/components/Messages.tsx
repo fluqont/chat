@@ -99,7 +99,7 @@ const Messages = ({
     <section className={classes.messages}>
       <header className={classes.header}>
         <div className={classes.right}>
-          {partner && <Pfp url={partner.pfpUrl} />}
+          <Pfp url={partner ? partner.pfpUrl : group!.pfpUrl} />
           <h2>
             <span>{isPartner ? partner.username : group!.name}</span>
             <small

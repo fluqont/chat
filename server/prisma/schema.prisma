@@ -49,6 +49,7 @@ model Group {
   name          String         @db.VarChar(30)
   creator       User           @relation(name: "CreatedGroups", fields: [creatorId], references: [id], onDelete: Cascade)
   creatorId     Int
+  pfpFileExtension String?         @db.VarChar(5)
   members       User[]         @relation(name: "Groups")
   groupRequests GroupRequest[]
   messages      Message[]

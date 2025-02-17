@@ -61,7 +61,7 @@ function EditGroup() {
     if (user) {
       const formData = new FormData(event.currentTarget);
 
-      fetchUpload(`/users/${user.id}/profile-picture`, {
+      fetchUpload(`/groups/${group?.id}/profile-picture`, {
         method: "PATCH",
         body: formData,
         credentials: "include",

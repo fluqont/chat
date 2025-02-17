@@ -8,6 +8,7 @@ export interface Group {
   id: number;
   creatorId: number;
   name: string;
+  pfpUrl: string;
 }
 
 export interface Chats {
@@ -73,6 +74,7 @@ const Chats = ({ chats, searchParams, setSearchParams }: ChatsProps) => {
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
                 searchParam="group-id"
+                pfpUrl={group.pfpUrl}
               />
             ))}
           </>
