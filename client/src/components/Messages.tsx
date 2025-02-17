@@ -357,7 +357,20 @@ const Message = ({ message, setEdit }: MessageProps) => {
         <ul role="list">
           {message.attachmentUrls.map((url, i) => (
             <li key={url}>
-              <a href={url}>attachment {i}</a>
+              {url.endsWith(".png") ||
+              url.endsWith(".webp") ||
+              url.endsWith(".jpg") ||
+              url.endsWith(".jpeg") ? (
+                <img
+                  src={url.split("?download=")[0]}
+                  alt={`attachment ${i}`}
+                  width={200}
+                  height={50}
+                  style={{ objectFit: "cover" }}
+                />
+              ) : (
+                <a href={url}>attachment {i}</a>
+              )}
             </li>
           ))}
         </ul>

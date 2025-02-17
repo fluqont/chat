@@ -90,7 +90,7 @@ export async function attachmentsPost(
   for (const { originalname, buffer } of req.files) {
     const fileBase64 = decode(buffer.toString("base64"));
     try {
-      const attachment = await prisma.attachment.create({
+      await prisma.attachment.create({
         data: { messageId: Number(messageId), fileName: originalname },
       });
 
@@ -112,7 +112,7 @@ export async function attachmentsPost(
 
       const { error } = await supabase.storage
         .from(bucket)
-        .upload(String(attachment.id), fileBase64, { upsert: true });
+        .upload(originalname, fileBase64, { upsert: true });
       if (error) {
         return next(error);
       }

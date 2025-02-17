@@ -60,7 +60,7 @@ export async function getMessages({
       (attachment) =>
         supabase.storage
           .from(`${message.id}-message`)
-          .getPublicUrl(String(attachment.id), {
+          .getPublicUrl(attachment.fileName, {
             download: attachment.fileName,
           }).data.publicUrl,
     );
