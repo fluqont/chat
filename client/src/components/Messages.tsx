@@ -13,7 +13,7 @@ import Form from "./Form";
 import InputField from "./InputField";
 import classes from "./Messages.module.css";
 import useFetch from "../hooks/useFetch";
-import { Edit, Paperclip, Send, Trash } from "lucide-react";
+import { Edit, EditIcon, Paperclip, Send, Trash } from "lucide-react";
 import { getDate } from "../date";
 import { Group } from "./Chats";
 import { useNavigate } from "react-router-dom";
@@ -113,13 +113,22 @@ const Messages = ({
           </h2>
         </div>
         {group && group.creatorId === user?.id && (
-          <button
-            className="icon-button"
-            aria-label="delete group"
-            onClick={handleGroupDelete}
-          >
-            <Trash size={20} />
-          </button>
+          <nav className={classes.groupNav}>
+            <button
+              className="icon-button"
+              aria-label="edit group"
+              onClick={() => navigate(`/groups/${group.id}/edit`)}
+            >
+              <EditIcon size={20} />
+            </button>
+            <button
+              className="icon-button"
+              aria-label="delete group"
+              onClick={handleGroupDelete}
+            >
+              <Trash size={20} />
+            </button>
+          </nav>
         )}
       </header>
       {groupDeleteError && <p aria-live="polite">{groupDeleteError}</p>}

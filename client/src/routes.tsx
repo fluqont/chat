@@ -7,6 +7,7 @@ import Search from "./routes/Search";
 import MessagesWithChats from "./routes/MessagesWithChats";
 import NewGroup from "./routes/NewGroup";
 import GroupRequest from "./routes/GroupRequest";
+import EditGroup from "./routes/EditGroup";
 
 const routes: RouteObject[] = [
   {
@@ -37,6 +38,10 @@ const routes: RouteObject[] = [
       {
         path: "/groups/:groupId/request",
         element: <GroupRequest />,
+      },
+      {
+        path: "/groups/:groupId/edit",
+        element: <EditGroup />,
       },
     ],
   },

@@ -21,12 +21,29 @@ export async function groupPost(
   }
 }
 
+export async function groupGet(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
+  const { groupId } = req.params;
+  try {
+    const group = await prisma.group.findUnique({
+      where: { id: Number(groupId), members: { some: { id: req.user?.id } } },
+    });
+    res.json(group);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function groupPut(
   req: Request,
   res: Response,
   next: NextFunction,
 ) {
-  const { groupId, name } = req.body;
+  const { groupId } = req.params;
+  const { name } = req.body;
   try {
     await prisma.group.update({
       data: { name: name },
