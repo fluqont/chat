@@ -35,6 +35,7 @@ export async function messagesGet(
       .getPublicUrl(
         `${partner && partner.id}.${partner && partner.pfpFileExtension}`,
       ).data;
+    const response = await fetch(publicUrl);
 
     const group =
       req.query.groupId &&
@@ -46,7 +47,9 @@ export async function messagesGet(
       partner: partner && {
         ...partner,
         friendshipStatus: friendshipStatus,
-        pfpUrl: publicUrl,
+        pfpUrl: response.ok
+          ? publicUrl
+          : process.env.CLIENT_URL + "/placeholder.svg",
       },
       group: group,
     });
