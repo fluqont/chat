@@ -44,7 +44,7 @@ export async function messagesGet(
           ? `${group && group.id}.${group && group.pfpFileExtension}`
           : `${partner && partner.id}.${partner && partner.pfpFileExtension}`,
       ).data;
-    const response = await fetch(publicUrl);
+    const response = await fetch(publicUrl, { method: "HEAD" });
 
     res.json({
       messages: messages,
@@ -57,7 +57,9 @@ export async function messagesGet(
       },
       group: group && {
         ...group,
-        pfpUrl: response.ok ? publicUrl : undefined,
+        pfpUrl: response.ok
+          ? publicUrl
+          : process.env.CLIENT_URL + "/placeholder.svg",
       },
     });
   } catch (err) {

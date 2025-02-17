@@ -110,20 +110,28 @@ export async function chatsGet(
       where: { id: { in: uniqueUserIds } },
     });
     const usersWithPfpUrls = users.map((user) => {
-      const { publicUrl } = supabase.storage
-        .from("pfp")
-        .getPublicUrl(`${user.id}.${user.pfpFileExtension}`).data;
-      return { ...user, pfpUrl: publicUrl };
+      if (user.pfpFileExtension) {
+        const { publicUrl } = supabase.storage
+          .from("pfp")
+          .getPublicUrl(`${user.id}.${user.pfpFileExtension}`).data;
+        return { ...user, pfpUrl: publicUrl };
+      } else {
+        return user;
+      }
     });
 
     const groups = await prisma.group.findMany({
       where: { id: { in: uniqueGroupIds } },
     });
     const groupsWithPfpUrls = groups.map((group) => {
-      const { publicUrl } = supabase.storage
-        .from("groups-pfp")
-        .getPublicUrl(`${group.id}.${group.pfpFileExtension}`).data;
-      return { ...group, pfpUrl: publicUrl };
+      if (group.pfpFileExtension) {
+        const { publicUrl } = supabase.storage
+          .from("groups-pfp")
+          .getPublicUrl(`${group.id}.${group.pfpFileExtension}`).data;
+        return { ...group, pfpUrl: publicUrl };
+      } else {
+        return group;
+      }
     });
 
     res.json({ users: usersWithPfpUrls, groups: groupsWithPfpUrls });

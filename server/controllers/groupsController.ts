@@ -34,22 +34,6 @@ export async function groupGet(
       where: { id: Number(groupId), members: { some: { id: req.user?.id } } },
     });
     res.json(group);
-
-    // if (!group) {
-    //   return next(new ErrorWithStatus("Group not found", 404));
-    // }
-
-    // const { publicUrl } = supabase.storage
-    //   .from("groups-pfp")
-    //   .getPublicUrl(`${group.id}.${group.pfpFileExtension}`).data;
-    // const response = await fetch(publicUrl);
-
-    // res.json({
-    //   ...group,
-    //   pfpUrl: response.ok
-    //     ? publicUrl
-    //     : process.env.CLIENT_URL + "/placeholder.svg",
-    // });
   } catch (err) {
     next(err);
   }
