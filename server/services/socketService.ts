@@ -1,7 +1,8 @@
 import { updateStatus } from "./usersService.js";
 import { io } from "../app.js";
+import { Socket } from "socket.io";
 
-io.on("connection", async (socket) => {
+export async function serveSocket(socket: Socket) {
   io.to(`/users/${socket.handshake.auth.token}`).emit("status", "ONLINE");
   await updateStatus(socket.handshake.auth.token, "ONLINE");
 
@@ -16,4 +17,4 @@ io.on("connection", async (socket) => {
   socket.on("/groups", async (groupId) => {
     await socket.join(`/groups/${groupId}`);
   });
-});
+}

@@ -8,6 +8,7 @@ import notFoundHandler from "./middlewares/notFoundHandler.js";
 import passport, { prismaStore } from "./configs/auth.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { serveSocket } from "./services/socketService.js";
 
 const app = express();
 const http = createServer(app);
@@ -45,3 +46,4 @@ export const io = new Server(http, {
     origin: process.env.CLIENT_URL,
   },
 });
+io.on("connection", serveSocket);

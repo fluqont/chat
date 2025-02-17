@@ -170,15 +170,8 @@ export async function messageDelete(
 
     const bucket = `${messageId}-message`;
 
-    const { error: emptyError } = await supabase.storage.emptyBucket(bucket);
-    if (emptyError) {
-      return next(emptyError);
-    }
-
-    const { error } = await supabase.storage.deleteBucket(bucket);
-    if (error) {
-      return next(error);
-    }
+    await supabase.storage.emptyBucket(bucket);
+    await supabase.storage.deleteBucket(bucket);
 
     res.json({ message: "OK" });
   } catch (err) {
