@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import { User, UserContext } from "../context/UserContext";
 import classes from "./User.module.css";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const GroupRequest = () => {
   const { user } = useContext(UserContext);
@@ -34,6 +34,7 @@ const GroupRequest = () => {
           {error}
         </p>
       )}
+      <Link to="/">skip</Link>
       {data && <Friends friends={data.friends} fetchFriends={fetchFriends} />}
     </section>
   );
